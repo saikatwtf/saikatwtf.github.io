@@ -3,32 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe - Saikat's Games</title>
+    <title>Tic-Tac-Toe - Saikat's Premium Games</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' }</script>
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4">Tic-Tac-Toe</h1>
-            <a href="../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
-        </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script>tailwind.config = { 
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    premium: {
+                        gold: '#FFD700',
+                        dark: '#1a1a2e',
+                        light: '#f8f9fa',
+                        accent: '#4f46e5',
+                        x: '#ef4444',
+                        o: '#3b82f6'
+                    }
+                },
+                fontFamily: {
+                    'sans': ['"Inter"', 'system-ui', 'sans-serif'],
+                    'display': ['"Poppins"', 'sans-serif']
+                }
+            }
+        }
+    }</script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap');
         
-        <div class="max-w-md mx-auto">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div id="status" class="text-center mb-4 text-lg font-semibold">Player X's turn</div>
-                <div id="board" class="grid grid-cols-3 gap-2 mb-4">
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="0"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="1"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="2"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="3"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="4"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="5"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="6"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="7"></button>
-                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="8"></button>
+        .cell {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .cell.x {
+            color: #ef4444;
+        }
+        
+        .cell.o {
+            color: #3b82f6;
+        }
+        
+        .winning-cell {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.7);
+        }
+        
+        .premium-border {
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #FFD700, #4f46e5, #FFD700) 1;
+        }
+    </style>
+</head>
+<body class="bg-premium-light dark:bg-premium-dark text-gray-900 dark:text-white min-h-screen font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8 animate__animated animate__fadeIn">
+            <h1 class="text-5xl font-bold mb-2 font-display bg-gradient-to-r from-premium-accent to-premium-gold bg-clip-text text-transparent">Tic-Tac-Toe</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">A premium gaming experience</p>
+            <a href="../index.html" class="inline-flex items-center text-premium-accent dark:text-premium-gold hover:text-premium-gold dark:hover:text-premium-gold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back to Portfolio
+            </a>
+        </div>
+
+        <div class="max-w-md mx-auto animate__animated animate__fadeInUp">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl premium-border">
+                <div id="status" class="text-center mb-6 text-xl font-semibold text-premium-accent dark:text-premium-gold">Player <span class="text-premium-x">X</span>'s turn</div>
+                
+                <div id="board" class="grid grid-cols-3 gap-3 mb-6">
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="0"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="1"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="2"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="3"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="4"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="5"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="6"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="7"></button>
+                    <button class="cell w-24 h-24 bg-gray-50 dark:bg-gray-700 rounded-lg text-4xl font-bold hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center justify-center" data-index="8"></button>
                 </div>
-                <button id="reset" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Reset Game</button>
+                
+                <div class="flex space-x-3">
+                    <button id="reset" class="flex-1 bg-premium-accent hover:bg-premium-accent/90 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] shadow-md flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                        Reset Game
+                    </button>
+                    <button id="theme-toggle" class="px-4 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 rounded-lg flex items-center justify-center transition-colors">
+                        <svg id="theme-icon-dark" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                        </svg>
+                        <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                <p>Made with ❤️ by Saikat</p>
             </div>
         </div>
     </div>
@@ -41,6 +124,9 @@
         const cells = document.querySelectorAll('.cell');
         const status = document.getElementById('status');
         const resetBtn = document.getElementById('reset');
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIconDark = document.getElementById('theme-icon-dark');
+        const themeIconLight = document.getElementById('theme-icon-light');
 
         const winPatterns = [
             [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -52,10 +138,10 @@
             for (let pattern of winPatterns) {
                 const [a, b, c] = pattern;
                 if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    return board[a];
+                    return { winner: board[a], winningCells: pattern };
                 }
             }
-            return board.includes('') ? null : 'tie';
+            return board.includes('') ? null : { winner: 'tie' };
         }
 
         function handleClick(e) {
@@ -64,14 +150,29 @@
 
             board[index] = currentPlayer;
             e.target.textContent = currentPlayer;
-            
-            const winner = checkWinner();
-            if (winner) {
-                gameActive = false;
-                status.textContent = winner === 'tie' ? "It's a tie!" : `Player ${winner} wins!`;
+            e.target.classList.add(currentPlayer.toLowerCase());
+            e.target.classList.add('animate__animated', 'animate__zoomIn');
+
+            const result = checkWinner();
+            if (result) {
+                if (result.winner === 'tie') {
+                    status.innerHTML = "It's a <span class='glow-text'>tie</span>!";
+                    status.classList.add('animate__animated', 'animate__pulse');
+                } else {
+                    gameActive = false;
+                    status.innerHTML = `Player <span class="glow-text">${result.winner}</span> <span class='animate__animated animate__tada'>wins</span>!`;
+                    
+                    // Highlight winning cells
+                    if (result.winningCells) {
+                        result.winningCells.forEach(i => {
+                            cells[i].classList.add('winning-cell', 'bg-premium-gold/20', 'dark:bg-premium-gold/10');
+                        });
+                    }
+                }
             } else {
                 currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                status.textContent = `Player ${currentPlayer}'s turn`;
+                const playerClass = currentPlayer === 'X' ? 'text-premium-x' : 'text-premium-o';
+                status.innerHTML = `Player <span class="${playerClass}">${currentPlayer}</span>'s turn`;
             }
         }
 
@@ -79,12 +180,45 @@
             board = ['', '', '', '', '', '', '', '', ''];
             currentPlayer = 'X';
             gameActive = true;
-            status.textContent = "Player X's turn";
-            cells.forEach(cell => cell.textContent = '');
+            status.innerHTML = `Player <span class="text-premium-x">X</span>'s turn`;
+            status.classList.remove('animate__animated', 'animate__pulse', 'animate__tada');
+            
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.classList.remove('x', 'o', 'animate__zoomIn', 'winning-cell', 
+                                   'bg-premium-gold/20', 'dark:bg-premium-gold/10');
+            });
+        }
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIconLight.classList.remove('hidden');
+                themeIconDark.classList.add('hidden');
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIconDark.classList.remove('hidden');
+                themeIconLight.classList.add('hidden');
+            }
+        }
+
+        // Check for saved theme preference
+        if (localStorage.getItem('theme') === 'dark' || 
+            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            themeIconDark.classList.remove('hidden');
+            themeIconLight.classList.add('hidden');
+        } else {
+            document.documentElement.classList.remove('dark');
+            themeIconLight.classList.remove('hidden');
+            themeIconDark.classList.add('hidden');
         }
 
         cells.forEach(cell => cell.addEventListener('click', handleClick));
         resetBtn.addEventListener('click', resetGame);
+        themeToggle.addEventListener('click', toggleTheme);
     </script>
 </body>
 </html>
