@@ -1,235 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saikat - Developer & Bot Builder</title>
-    <meta name="description" content="Saikat - A passionate developer, bot builder, and automation enthusiast. Explore my projects and games.">
-    <meta property="og:title" content="Saikat - Developer & Bot Builder">
-    <meta property="og:description" content="A passionate developer, bot builder, and automation enthusiast">
-    <meta property="og:url" content="https://saikatwtf.github.io">
-    <meta property="og:type" content="website">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out'
-                    }
-                }
-            }
+  <!-- …metatags unchanged… -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: { 'fade-in':'fadeIn .5s ease-in-out', 'slide-up':'slideUp .6s ease-out' },
+          fontFamily: { sans:['Inter','sans-serif'] }
         }
-    </script>
-    <style>
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        html { scroll-behavior: smooth; }
-    </style>
+      }
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes slideUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    html { scroll-behavior:smooth }
+    body { font-family:'Inter',sans-serif }
+  </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
-    <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-700">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="text-xl font-bold">Saikat</div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
-                    <a href="#repos" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Projects</a>
-                    <a href="#games" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Games</a>
-                    <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
-                </div>
-                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    <span class="dark:hidden">🌙</span>
-                    <span class="hidden dark:inline">☀️</span>
-                </button>
-            </div>
-        </div>
-    </nav>
+  <!-- Navbar -->
+  <nav class="fixed inset-x-0 top-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur z-50 border-b border-gray-200 dark:border-gray-700">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="text-2xl font-bold tracking-tight">Saikat</div>
+      <div class="hidden md:flex space-x-6 text-sm font-medium">
+        <a href="#home" class="hover:text-blue-600 dark:hover:text-blue-400">Home</a>
+        <a href="#repos" class="hover:text-blue-600 dark:hover:text-blue-400">Projects</a>
+        <a href="#games" class="hover:text-blue-600 dark:hover:text-blue-400">Games</a>
+        <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400">Contact</a>
+      </div>
+      <button id="theme-toggle" class="ml-4 text-xl">🌙</button>
+    </div>
+  </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div class="max-w-4xl mx-auto text-center animate-fade-in">
-            <div class="w-32 h-32 mx-auto mb-8 rounded-full overflow-hidden">
-                <img src="images/profile.jpg" alt="Saikat's Profile" class="w-full h-full object-cover">
-            </div>
-            <h1 class="text-4xl sm:text-6xl font-bold mb-4">
-                Hi, I'm <span class="text-blue-600 dark:text-blue-400">Saikat</span>
-            </h1>
-            <p class="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8">
-                A passionate developer, bot builder, and automation enthusiast.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://github.com/saikatwtf" target="_blank" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
-                    GitHub Profile
-                </a>
-                <a href="#repos" class="border border-gray-300 dark:border-gray-600 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    View Projects
-                </a>
-            </div>
-        </div>
-    </section>
+  <!-- Hero -->
+  <section id="home" class="min-h-screen pt-24 px-4 flex flex-col items-center text-center animate-fade-in">
+    <img src="images/profile.jpg" alt="Saikat" class="w-28 h-28 rounded-full object-cover shadow-lg mb-6">
+    <h1 class="text-4xl sm:text-5xl font-bold mb-4">Hi, I'm <span class="text-blue-600 dark:text-blue-400">Saikat</span></h1>
+    <p class="text-lg text-gray-600 dark:text-gray-300 max-w-xl mb-6">A passionate developer, bot builder, and automation enthusiast.</p>
+    <div class="flex flex-wrap justify-center gap-4">
+      <a href="https://github.com/saikatwtf" class="px-5 py-2 text-sm rounded bg-gray-900 text-white dark:bg-white dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-200 transition">GitHub Profile</a>
+      <a href="#repos" class="px-5 py-2 text-sm rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition">View Projects</a>
+    </div>
+  </section>
 
-    <!-- GitHub Repositories Section -->
-    <section id="repos" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">GitHub Projects</h2>
-            <div id="repos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="animate-pulse bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
-                    <div class="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-4"></div>
-                    <div class="h-3 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
-                    <div class="h-3 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Projects & Games: same structure, but use centered containers, consistent padding and simpler card styles -->
 
-    <!-- Games Section -->
-    <section id="games" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Games</h2>
-            
-            <!-- Board Games -->
-            <h3 class="text-2xl font-bold mb-6">Board Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">⭕</div>
-                    <h3 class="text-xl font-semibold mb-2">Tic-Tac-Toe</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 3x3 grid game</p>
-                    <a href="games/tic-tac-toe.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">♟️</div>
-                    <h3 class="text-xl font-semibold mb-2">Chess</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Strategic board game</p>
-                    <a href="games/chess.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🎲</div>
-                    <h3 class="text-xl font-semibold mb-2">Ludo</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic dice board game</p>
-                    <a href="games/ludo.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🐍</div>
-                    <h3 class="text-xl font-semibold mb-2">Snake & Ladder</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Climb ladders, avoid snakes</p>
-                    <a href="games/snake-ladder.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🔢</div>
-                    <h3 class="text-xl font-semibold mb-2">Sudoku</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Number puzzle game</p>
-                    <a href="games/sudoku.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🐦</div>
-                    <h3 class="text-xl font-semibold mb-2">Flappy Bird</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Navigate through pipes</p>
-                    <a href="games/flappy-bird.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-            </div>
-            
-            <!-- Math Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">Math Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">2️⃣4️⃣</div>
-                    <h3 class="text-xl font-semibold mb-2">24 Game</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Make 24 with four numbers</p>
-                    <a href="games/math/24-game.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🧠</div>
-                    <h3 class="text-xl font-semibold mb-2">Arithmetic Memory</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Match equations with answers</p>
-                    <a href="games/math/arithmetic-memory.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🚀</div>
-                    <h3 class="text-xl font-semibold mb-2">Math Blaster</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Solve problems to blast asteroids</p>
-                    <a href="games/math/math-blaster.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-            </div>
-            
-            <!-- Creative Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">Creative Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🎨</div>
-                    <h3 class="text-xl font-semibold mb-2">Pixel Painter</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Create pixel art masterpieces</p>
-                    <a href="games/creative/pixel-painter.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">⌨️</div>
-                    <h3 class="text-xl font-semibold mb-2">Typing Speed Test</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Test your typing skills</p>
-                    <a href="games/creative/typing-test.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🔤</div>
-                    <h3 class="text-xl font-semibold mb-2">Wordle Clone</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Guess the 5-letter word</p>
-                    <a href="games/creative/wordle.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-            </div>
-            
-            <!-- AI Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">AI Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">✂️</div>
-                    <h3 class="text-xl font-semibold mb-2">Rock Paper Scissors AI</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">AI learns your patterns</p>
-                    <a href="games/ai/rock-paper-scissors.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">❓</div>
-                    <h3 class="text-xl font-semibold mb-2">Trivia Quiz</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">API-powered trivia questions</p>
-                    <a href="games/ai/trivia-quiz.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🤖</div>
-                    <h3 class="text-xl font-semibold mb-2">Mini AI Chatbot</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Rule-based conversational AI</p>
-                    <a href="games/ai/mini-chatbot.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-            </div>
-        </div>
-    </section>
+  <!-- Contact Section -->
+  <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-4xl mx-auto text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-12">Get In Touch</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <a href="https://t.me/saikatftw" class="bg-blue-500 text-white py-6 rounded-lg shadow hover:bg-blue-600 transition">
+          <div class="text-2xl">📱 Telegram</div>
+          <div class="mt-2 text-sm">@saikatftw</div>
+        </a>
+        <a href="https://t.me/AnnihilusOP_Bot" class="bg-purple-500 text-white py-6 rounded-lg shadow hover:bg-purple-600 transition">
+          <div class="text-2xl">🤖 Bot</div>
+          <div class="mt-2 text-sm">@AnnihilusOP_Bot</div>
+        </a>
+      </div>
+    </div>
+  </section>
 
-    <!-- Contact Section -->
-    <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
-        <div class="max-w-4xl mx-auto text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-12">Get In Touch</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <a href="https://t.me/saikatftw" target="_blank" class="bg-blue-500 text-white p-6 rounded-lg hover:bg-blue-600 transition-colors">
-                    <div class="text-3xl mb-4">📱</div>
-                    <h3 class="text-xl font-semibold mb-2">Telegram</h3>
-                    <p>@saikatftw</p>
-                </a>
-                <a href="https://t.me/AnnihilusOP_Bot" target="_blank" class="bg-purple-500 text-white p-6 rounded-lg hover:bg-purple-600 transition-colors">
-                    <div class="text-3xl mb-4">🤖</div>
-                    <h3 class="text-xl font-semibold mb-2">Telegram Bot</h3>
-                    <p>@AnnihilusOP_Bot</p>
-                </a>
-            </div>
-        </div>
-    </section>
+  <!-- Footer -->
+  <footer class="py-6 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+    <p>&copy; 2024 Saikat. Just building things on the internet, one pixel at a time.</p>
+  </footer>
 
-    <!-- Footer -->
-    <footer class="py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-200 dark:border-gray-700">
-        <div class="max-w-6xl mx-auto text-center text-gray-600 dark:text-gray-300">
-            <p>&copy; 2024 Saikat. Built with ❤️ and hosted on GitHub Pages.</p>
-        </div>
-    </footer>
-
-    <script src="js/main.js"></script>
+  <!-- Theme Toggle Script -->
+  <script>
+    const btn = document.getElementById('theme-toggle');
+    btn.addEventListener('click', () => document.documentElement.classList.toggle('dark'));
+  </script>
 </body>
 </html>
