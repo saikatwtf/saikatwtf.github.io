@@ -49,19 +49,19 @@
         </div>
 
         <div class="relative">
-            <div id="ui-container" class="absolute inset-0 z-10 flex flex-col items-center justify-center">
+            <div id="ui-container" class="absolute inset-0 z-10 flex flex-col items-center justify-center pointer-events-none">
                 <div class="text-center text-white text-shadow">
                     <div id="score-display" class="text-6xl font-bold mb-4 hidden">0</div>
-                    <div id="instructions" class="text-lg">Tap or press Space to flap</div>
+                    <div id="instructions" class="text-lg hidden">Tap or press Space to flap</div>
                 </div>
 
-                <div id="start-screen" class="text-center mt-8">
+                <div id="start-screen" class="text-center mt-8 pointer-events-auto">
                     <button id="startBtn" class="bg-brand-success text-white px-8 py-3 rounded-full font-semibold shadow-lg hover:bg-green-500 transform hover:scale-105 transition duration-300">
                         Start Game
                     </button>
                 </div>
 
-                <div id="game-over-screen" class="hidden text-center mt-8 p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-xl fade-in">
+                <div id="game-over-screen" class="hidden text-center mt-8 p-6 bg-white/20 backdrop-blur-md rounded-2xl shadow-xl fade-in pointer-events-auto">
                     <div class="text-4xl font-bold mb-2">Game Over!</div>
                     <div class="text-xl mb-4">Final Score: <span id="finalScore">0</span></div>
                     <button id="restartBtn" class="bg-blue-500 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:bg-blue-600 transform hover:scale-105 transition duration-300">
@@ -78,6 +78,7 @@
         const ctx = canvas.getContext('2d');
 
         // UI Elements
+        const uiContainer = document.getElementById('ui-container');
         const scoreDisplay = document.getElementById('score-display');
         const finalScore = document.getElementById('finalScore');
         const instructions = document.getElementById('instructions');
@@ -89,7 +90,7 @@
         let gameState = 'waiting'; // waiting, playing, gameOver
         let score = 0;
         let bird, pipes, gravity, jumpStrength, pipeWidth, pipeGap, pipeSpeed, frame;
-        let gameStarted = false;
+        let gameHasStarted = false; // Tracks if the first flap has happened
 
         function initializeGameVariables() {
             bird = { x: 80, y: 250, velocity: 0, width: 34, height: 24, rotation: 0 };
@@ -101,26 +102,23 @@
             pipeSpeed = 3;
             score = 0;
             frame = 0;
-            gameStarted = false;
+            gameHasStarted = false;
         }
 
-        // Sprites (using simple shapes for this example)
+        // Sprites
         const birdSprite = {
             draw: () => {
                 ctx.save();
                 ctx.translate(bird.x, bird.y);
                 ctx.rotate(bird.rotation);
-                // Body
                 ctx.fillStyle = '#FFD700';
                 ctx.beginPath();
                 ctx.arc(0, 0, 15, 0, Math.PI * 2, true);
                 ctx.fill();
-                // Wing
                 ctx.fillStyle = '#FFB300';
                 ctx.beginPath();
                 ctx.arc(-5, 0, 8, 0, Math.PI, false);
                 ctx.fill();
-                 // Eye
                 ctx.fillStyle = 'white';
                 ctx.beginPath();
                 ctx.arc(5, -3, 4, 0, Math.PI * 2, true);
@@ -133,25 +131,20 @@
             }
         };
 
-
         function drawPipes() {
-            ctx.fillStyle = '#2E8B57'; // Darker green
+            ctx.fillStyle = '#2E8B57';
             pipes.forEach(pipe => {
-                // Top pipe
                 ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
-                // Bottom pipe
                 ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
             });
         }
 
         function drawBackground() {
             const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-            gradient.addColorStop(0, '#87CEEB'); // Sky Blue
-            gradient.addColorStop(1, '#E0F6FF'); // Lighter blue
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#E0F6FF');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-             // Ground
             ctx.fillStyle = '#A0522D';
             ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
             ctx.fillStyle = '#8B4513';
@@ -159,29 +152,22 @@
         }
 
         function updateBird() {
-            if (!gameStarted) return;
+            if (!gameHasStarted) return; // Don't apply gravity until the first flap
             bird.velocity += gravity;
             bird.y += bird.velocity;
-            bird.rotation = Math.min(Math.max(-0.3, bird.velocity / 20), 0.7); // Rotate based on velocity
+            bird.rotation = Math.min(Math.max(-0.3, bird.velocity / 20), 0.7);
         }
 
         function updatePipes() {
-            if (!gameStarted) return;
+            if (!gameHasStarted) return;
             frame++;
             pipes.forEach(pipe => {
                 pipe.x -= pipeSpeed;
             });
-
             pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
-
-            if (frame % 90 === 0) { // Add pipes at a regular interval
+            if (frame % 90 === 0) {
                 const pipeTop = Math.random() * (canvas.height - pipeGap - 200) + 100;
-                pipes.push({
-                    x: canvas.width,
-                    top: pipeTop,
-                    bottom: pipeTop + pipeGap,
-                    scored: false
-                });
+                pipes.push({ x: canvas.width, top: pipeTop, bottom: pipeTop + pipeGap, scored: false });
             }
         }
 
@@ -189,13 +175,10 @@
             if (bird.y + 15 > canvas.height - 50 || bird.y - 15 < 0) {
                 return true;
             }
-
             for (let pipe of pipes) {
-                if (bird.x + 15 > pipe.x && bird.x - 15 < pipe.x + pipeWidth &&
-                    (bird.y - 15 < pipe.top || bird.y + 15 > pipe.bottom)) {
+                if (bird.x + 15 > pipe.x && bird.x - 15 < pipe.x + pipeWidth && (bird.y - 15 < pipe.top || bird.y + 15 > pipe.bottom)) {
                     return true;
                 }
-
                 if (!pipe.scored && pipe.x + pipeWidth < bird.x - 15) {
                     pipe.scored = true;
                     score++;
@@ -207,25 +190,24 @@
 
         function gameLoop() {
             if (gameState !== 'playing') return;
-
             drawBackground();
             updatePipes();
             drawPipes();
             updateBird();
             birdSprite.draw();
-
-            if (gameStarted && checkCollisions()) {
+            if (gameHasStarted && checkCollisions()) {
                 endGame();
                 return;
             }
-
             requestAnimationFrame(gameLoop);
         }
 
         function jump() {
             if (gameState === 'playing') {
-                if (!gameStarted) {
-                    gameStarted = true;
+                if (!gameHasStarted) {
+                    gameHasStarted = true;
+                    instructions.classList.add('hidden'); // Hide instructions
+                    scoreDisplay.classList.remove('hidden'); // Show score
                 }
                 bird.velocity = jumpStrength;
             }
@@ -234,22 +216,40 @@
         function showUI(state) {
             startScreen.classList.toggle('hidden', state !== 'waiting');
             gameOverScreen.classList.toggle('hidden', state !== 'gameOver');
-            instructions.classList.toggle('hidden', state === 'gameOver');
-            scoreDisplay.classList.toggle('hidden', state !== 'playing');
+            
+            // Only show instructions when game is in 'playing' state but hasn't had the first flap yet
+            instructions.classList.toggle('hidden', state !== 'playing' || gameHasStarted);
+            // Hide score display unless the game is playing AND has started
+            scoreDisplay.classList.toggle('hidden', !(state === 'playing' && gameHasStarted));
+
+             if (state === 'waiting') {
+                uiContainer.classList.remove('pointer-events-none');
+            }
         }
 
         function startGame() {
             gameState = 'playing';
             initializeGameVariables();
             scoreDisplay.textContent = '0';
-            showUI('playing');
+            
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            instructions.classList.remove('hidden');
+            scoreDisplay.classList.add('hidden');
+
+            uiContainer.classList.add('pointer-events-none'); // Allow clicks on canvas
+
             gameLoop();
         }
 
         function endGame() {
             gameState = 'gameOver';
             finalScore.textContent = score;
-            showUI('gameOver');
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+            instructions.classList.add('hidden');
+            scoreDisplay.classList.add('hidden');
+            uiContainer.classList.remove('pointer-events-none');
         }
 
         function resetGame() {
@@ -257,11 +257,15 @@
             initializeGameVariables();
             drawBackground();
             birdSprite.draw();
-            showUI('waiting');
+            startScreen.classList.remove('hidden');
+            gameOverScreen.classList.add('hidden');
+            instructions.classList.add('hidden');
+            scoreDisplay.classList.add('hidden');
+            uiContainer.classList.remove('pointer-events-none');
         }
 
         // Event listeners
-        canvas.addEventListener('click', jump);
+        canvas.addEventListener('mousedown', jump); // Use mousedown for faster response
         canvas.addEventListener('touchstart', (e) => { e.preventDefault(); jump(); }, { passive: false });
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space' || e.key === ' ') {
@@ -272,17 +276,13 @@
         startBtn.addEventListener('click', (e) => { e.stopPropagation(); startGame(); });
         restartBtn.addEventListener('click', (e) => { e.stopPropagation(); startGame(); });
 
-
-        // Initial Setup
         window.onload = () => {
-            // Adjust canvas for mobile screens if needed
             const aspectRatio = 600 / 400;
             let newWidth = Math.min(400, window.innerWidth - 30);
             canvas.width = newWidth;
             canvas.height = newWidth * aspectRatio;
             resetGame();
         };
-
     </script>
 </body>
 </html>
