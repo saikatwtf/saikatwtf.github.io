@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe - Saikat's Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Tic-Tac-Toe</h1>
+            <a href="../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-md mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div id="status" class="text-center mb-4 text-lg font-semibold">Player X's turn</div>
+                <div id="board" class="grid grid-cols-3 gap-2 mb-4">
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="0"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="1"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="2"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="3"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="4"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="5"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="6"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="7"></button>
+                    <button class="cell w-20 h-20 bg-gray-200 dark:bg-gray-700 rounded text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600" data-index="8"></button>
+                </div>
+                <button id="reset" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Reset Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let board = ['', '', '', '', '', '', '', '', ''];
+        let currentPlayer = 'X';
+        let gameActive = true;
+
+        const cells = document.querySelectorAll('.cell');
+        const status = document.getElementById('status');
+        const resetBtn = document.getElementById('reset');
+
+        const winPatterns = [
+            [0, 1, 2], [3, 4, 5], [6, 7, 8],
+            [0, 3, 6], [1, 4, 7], [2, 5, 8],
+            [0, 4, 8], [2, 4, 6]
+        ];
+
+        function checkWinner() {
+            for (let pattern of winPatterns) {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return board[a];
+                }
+            }
+            return board.includes('') ? null : 'tie';
+        }
+
+        function handleClick(e) {
+            const index = e.target.dataset.index;
+            if (board[index] || !gameActive) return;
+
+            board[index] = currentPlayer;
+            e.target.textContent = currentPlayer;
+            
+            const winner = checkWinner();
+            if (winner) {
+                gameActive = false;
+                status.textContent = winner === 'tie' ? "It's a tie!" : `Player ${winner} wins!`;
+            } else {
+                currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                status.textContent = `Player ${currentPlayer}'s turn`;
+            }
+        }
+
+        function resetGame() {
+            board = ['', '', '', '', '', '', '', '', ''];
+            currentPlayer = 'X';
+            gameActive = true;
+            status.textContent = "Player X's turn";
+            cells.forEach(cell => cell.textContent = '');
+        }
+
+        cells.forEach(cell => cell.addEventListener('click', handleClick));
+        resetBtn.addEventListener('click', resetGame);
+    </script>
+</body>
+</html>
