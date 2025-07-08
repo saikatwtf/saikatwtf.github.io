@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird - Saikat's Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Flappy Bird</h1>
+            <a href="../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-md mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="text-center mb-4">
+                    <div class="text-lg font-semibold">Score: <span id="score">0</span></div>
+                    <div class="text-sm text-gray-600 dark:text-gray-300">Click or press Space to flap</div>
+                </div>
+                
+                <canvas id="gameCanvas" width="400" height="600" class="border-2 border-gray-400 mx-auto block bg-sky-200"></canvas>
+                
+                <div class="text-center mt-4">
+                    <button id="startBtn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Start Game</button>
+                    <div id="gameOver" class="hidden mt-2">
+                        <div class="text-red-600 font-bold mb-2">Game Over!</div>
+                        <button id="restartBtn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Play Again</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const startBtn = document.getElementById('startBtn');
+        const gameOverDiv = document.getElementById('gameOver');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let gameState = 'waiting'; // waiting, playing, gameOver
+        let score = 0;
+        let bird = { x: 50, y: 300, velocity: 0, size: 20 };
+        let pipes = [];
+        let gravity = 0.5;
+        let jumpStrength = -8;
+        let pipeWidth = 60;
+        let pipeGap = 150;
+        let pipeSpeed = 2;
+
+        function drawBird() {
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(bird.x, bird.y, bird.size, bird.size);
+            // Simple beak
+            ctx.fillStyle = '#FF8C00';
+            ctx.fillRect(bird.x + bird.size, bird.y + 8, 8, 4);
+        }
+
+        function drawPipes() {
+            ctx.fillStyle = '#228B22';
+            pipes.forEach(pipe => {
+                // Top pipe
+                ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+                // Bottom pipe
+                ctx.fillRect(pipe.x, pipe.bottom, pipeWidth, canvas.height - pipe.bottom);
+            });
+        }
+
+        function drawBackground() {
+            // Sky
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Ground
+            ctx.fillStyle = '#DEB887';
+            ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+        }
+
+        function updateBird() {
+            bird.velocity += gravity;
+            bird.y += bird.velocity;
+        }
+
+        function updatePipes() {
+            pipes.forEach(pipe => {
+                pipe.x -= pipeSpeed;
+            });
+
+            // Remove pipes that are off screen
+            pipes = pipes.filter(pipe => pipe.x + pipeWidth > 0);
+
+            // Add new pipes
+            if (pipes.length === 0 || pipes[pipes.length - 1].x < canvas.width - 200) {
+                const pipeTop = Math.random() * (canvas.height - pipeGap - 100) + 50;
+                pipes.push({
+                    x: canvas.width,
+                    top: pipeTop,
+                    bottom: pipeTop + pipeGap,
+                    scored: false
+                });
+            }
+        }
+
+        function checkCollisions() {
+            // Ground collision
+            if (bird.y + bird.size > canvas.height - 50 || bird.y < 0) {
+                return true;
+            }
+
+            // Pipe collision
+            for (let pipe of pipes) {
+                if (bird.x < pipe.x + pipeWidth && bird.x + bird.size > pipe.x) {
+                    if (bird.y < pipe.top || bird.y + bird.size > pipe.bottom) {
+                        return true;
+                    }
+                }
+                
+                // Score when passing pipe
+                if (!pipe.scored && bird.x > pipe.x + pipeWidth) {
+                    pipe.scored = true;
+                    score++;
+                    scoreElement.textContent = score;
+                }
+            }
+            return false;
+        }
+
+        function gameLoop() {
+            if (gameState !== 'playing') return;
+
+            drawBackground();
+            updateBird();
+            updatePipes();
+            drawPipes();
+            drawBird();
+
+            if (checkCollisions()) {
+                gameState = 'gameOver';
+                startBtn.classList.add('hidden');
+                gameOverDiv.classList.remove('hidden');
+                return;
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function jump() {
+            if (gameState === 'playing') {
+                bird.velocity = jumpStrength;
+            }
+        }
+
+        function startGame() {
+            gameState = 'playing';
+            score = 0;
+            bird = { x: 50, y: 300, velocity: 0, size: 20 };
+            pipes = [];
+            scoreElement.textContent = '0';
+            startBtn.classList.add('hidden');
+            gameOverDiv.classList.add('hidden');
+            gameLoop();
+        }
+
+        function resetGame() {
+            gameState = 'waiting';
+            startBtn.classList.remove('hidden');
+            gameOverDiv.classList.add('hidden');
+            drawBackground();
+            drawBird();
+        }
+
+        // Event listeners
+        canvas.addEventListener('click', jump);
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+        });
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+
+        // Initial draw
+        drawBackground();
+        drawBird();
+    </script>
+</body>
+</html>

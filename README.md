@@ -9,7 +9,7 @@ A modern, responsive portfolio website showcasing projects, games, and contact i
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Dark/Light Mode**: Toggle between themes with localStorage persistence
 - **GitHub Integration**: Dynamically fetches and displays public repositories
-- **Interactive Games**: 5 playable web games (Tic-Tac-Toe, Chess, Ludo, Snake & Ladder, Sudoku)
+- **Interactive Games**: 6 playable web games (Tic-Tac-Toe, Chess, Ludo, Snake & Ladder, Sudoku, Flappy Bird)
 - **Smooth Navigation**: Sticky navbar with smooth scrolling
 - **SEO Optimized**: Meta tags and Open Graph support
 - **Contact Integration**: Direct Telegram links and bot integration
@@ -26,7 +26,8 @@ saikatwtf.github.io/
 │   ├── chess.html
 │   ├── ludo.html
 │   ├── snake-ladder.html
-│   └── sudoku.html
+│   ├── sudoku.html
+│   └── flappy-bird.html
 ├── README.md
 └── LICENSE
 ```
@@ -38,6 +39,7 @@ saikatwtf.github.io/
 3. **Ludo** - Simplified Ludo with dice rolling mechanics
 4. **Snake & Ladder** - Traditional board game with snakes and ladders
 5. **Sudoku** - Number puzzle with validation and hints
+6. **Flappy Bird** - Arcade-style game with pipe navigation
 
 ## GitHub Pages Deployment
 
