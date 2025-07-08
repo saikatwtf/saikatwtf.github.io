@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24 Game - Math Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">24 Game</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Use the four numbers and operations (+, -, ×, ÷) to make 24</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-lg mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-lg font-semibold">Score: <span id="score">0</span></div>
+                    <button id="new-game" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">New Numbers</button>
+                </div>
+                
+                <div id="numbers" class="grid grid-cols-4 gap-4 mb-6">
+                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
+                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
+                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
+                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
+                </div>
+                
+                <div class="flex justify-center gap-4 mb-6">
+                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">+</button>
+                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">-</button>
+                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">×</button>
+                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">÷</button>
+                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">(</button>
+                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">)</button>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                        <div id="expression" class="text-2xl font-mono min-h-12 text-center"></div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button id="clear" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Clear</button>
+                    <button id="check" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Check Solution</button>
+                </div>
+                
+                <div id="message" class="mt-4 text-center font-semibold"></div>
+                
+                <div class="mt-6 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="font-semibold">How to play:</p>
+                    <ol class="list-decimal pl-5 space-y-1">
+                        <li>Use all four numbers exactly once</li>
+                        <li>Use operations (+, -, ×, ÷) and parentheses</li>
+                        <li>Make the result equal to 24</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const numberCards = document.querySelectorAll('.number-card');
+        const operators = document.querySelectorAll('.operator');
+        const expressionDiv = document.getElementById('expression');
+        const checkButton = document.getElementById('check');
+        const clearButton = document.getElementById('clear');
+        const newGameButton = document.getElementById('new-game');
+        const messageDiv = document.getElementById('message');
+        const scoreElement = document.getElementById('score');
+        
+        let currentExpression = '';
+        let selectedNumbers = [];
+        let availableNumbers = [];
+        let score = 0;
+        
+        // Generate a solvable 24 game puzzle
+        function generatePuzzle() {
+            // These combinations are known to have solutions
+            const solvableSets = [
+                [1, 3, 4, 6], [1, 4, 5, 6], [2, 3, 5, 6], [2, 3, 4, 6],
+                [1, 2, 5, 8], [2, 3, 8, 8], [3, 3, 7, 7], [3, 3, 8, 8],
+                [4, 4, 6, 6], [4, 6, 6, 6], [4, 7, 8, 8], [5, 5, 5, 9],
+                [1, 3, 4, 6], [1, 5, 5, 5], [2, 2, 4, 10], [2, 3, 7, 8]
+            ];
+            
+            // Pick a random set
+            const randomSet = solvableSets[Math.floor(Math.random() * solvableSets.length)];
+            
+            // Shuffle the set
+            return randomSet.sort(() => Math.random() - 0.5);
+        }
+        
+        function initGame() {
+            currentExpression = '';
+            selectedNumbers = [];
+            expressionDiv.textContent = '';
+            messageDiv.textContent = '';
+            
+            // Generate new numbers
+            availableNumbers = generatePuzzle();
+            
+            // Display numbers on cards
+            numberCards.forEach((card, index) => {
+                card.textContent = availableNumbers[index];
+                card.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'opacity-50');
+                card.disabled = false;
+            });
+        }
+        
+        function evaluateExpression(expr) {
+            try {
+                // Replace × with * and ÷ with /
+                const jsExpr = expr.replace(/×/g, '*').replace(/÷/g, '/');
+                return eval(jsExpr);
+            } catch (e) {
+                return null;
+            }
+        }
+        
+        function checkSolution() {
+            // Check if all numbers are used
+            if (selectedNumbers.length !== 4) {
+                messageDiv.textContent = 'Use all four numbers!';
+                messageDiv.className = 'mt-4 text-center font-semibold text-yellow-600';
+                return;
+            }
+            
+            // Evaluate the expression
+            const result = evaluateExpression(currentExpression);
+            
+            if (result === null) {
+                messageDiv.textContent = 'Invalid expression!';
+                messageDiv.className = 'mt-4 text-center font-semibold text-red-600';
+            } else if (Math.abs(result - 24) < 0.0001) { // Account for floating point errors
+                messageDiv.textContent = 'Correct! You made 24!';
+                messageDiv.className = 'mt-4 text-center font-semibold text-green-600';
+                score += 1;
+                scoreElement.textContent = score;
+                setTimeout(initGame, 2000);
+            } else {
+                messageDiv.textContent = `Result is ${result}, not 24. Try again!`;
+                messageDiv.className = 'mt-4 text-center font-semibold text-red-600';
+            }
+        }
+        
+        // Event listeners
+        numberCards.forEach(card => {
+            card.addEventListener('click', () => {
+                if (card.disabled) return;
+                
+                const number = card.textContent;
+                currentExpression += number;
+                expressionDiv.textContent = currentExpression;
+                
+                // Mark card as used
+                card.classList.add('bg-gray-300', 'dark:bg-gray-600', 'opacity-50');
+                card.disabled = true;
+                
+                selectedNumbers.push(number);
+            });
+        });
+        
+        operators.forEach(op => {
+            op.addEventListener('click', () => {
+                currentExpression += op.textContent;
+                expressionDiv.textContent = currentExpression;
+            });
+        });
+        
+        clearButton.addEventListener('click', initGame);
+        checkButton.addEventListener('click', checkSolution);
+        newGameButton.addEventListener('click', initGame);
+        
+        // Initialize the game
+        initGame();
+    </script>
+</body>
+</html>
