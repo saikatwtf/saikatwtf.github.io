@@ -21,6 +21,8 @@ saikatwtf.github.io/
 ├── index.html          # Main portfolio page
 ├── js/
 │   └── main.js         # Theme toggle & GitHub API integration
+├── images/
+│   └── profile.jpg      # Profile picture
 ├── games/
 │   ├── tic-tac-toe.html
 │   ├── chess.html
