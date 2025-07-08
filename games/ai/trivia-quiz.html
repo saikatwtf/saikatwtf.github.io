@@ -3,36 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trivia Quiz - AI Games</title>
+    <title>Trivia Master - Premium Quiz Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' }</script>
-</head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4">Trivia Quiz</h1>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Test your knowledge with questions from Open Trivia DB</p>
-            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
-        </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        premium: {
+                            dark: '#1a1a2e',
+                            light: '#f8f9fa',
+                            accent: '#4f46e5',
+                            gold: '#FFD700',
+                            correct: '#10b981',
+                            incorrect: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['"Inter"', 'system-ui', 'sans-serif'],
+                        'display': ['"Poppins"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap');
         
-        <div class="max-w-3xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        .answer-btn {
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .answer-btn.correct {
+            background-color: #10b981 !important;
+            color: white !important;
+            border-color: #059669 !important;
+        }
+        
+        .answer-btn.incorrect {
+            background-color: #ef4444 !important;
+            color: white !important;
+            border-color: #dc2626 !important;
+        }
+        
+        .premium-border {
+            border: 2px solid;
+            border-image: linear-gradient(45deg, #4f46e5, #FFD700, #4f46e5) 1;
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 8px rgba(79, 70, 229, 0.5);
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.5s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .trophy {
+            animation: float 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-premium-light dark:bg-premium-dark text-gray-900 dark:text-white min-h-screen font-sans">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8 animate__animated animate__fadeIn">
+            <h1 class="text-5xl font-bold mb-2 font-display bg-gradient-to-r from-premium-accent to-premium-gold bg-clip-text text-transparent">Trivia Master</h1>
+            <p class="text-lg text-gray-600 dark:text-gray-300 mb-4">Test your knowledge with premium trivia questions</p>
+            <a href="../../index.html" class="inline-flex items-center text-premium-accent dark:text-premium-gold hover:text-premium-gold dark:hover:text-premium-gold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                </svg>
+                Back to Portfolio
+            </a>
+        </div>
+
+        <div class="max-w-3xl mx-auto animate__animated animate__fadeInUp">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl premium-border">
                 <!-- Quiz Setup -->
                 <div id="quiz-setup" class="mb-6">
-                    <h2 class="text-2xl font-bold mb-4">Quiz Settings</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Quiz Settings</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Number of Questions</label>
-                            <select id="question-count" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Number of Questions</label>
+                            <select id="question-count" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-premium-accent focus:border-premium-accent transition-all">
                                 <option value="5">5 Questions</option>
                                 <option value="10" selected>10 Questions</option>
                                 <option value="15">15 Questions</option>
                                 <option value="20">20 Questions</option>
+                                <option value="25">25 Questions</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Difficulty</label>
-                            <select id="difficulty" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Difficulty</label>
+                            <select id="difficulty" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-premium-accent focus:border-premium-accent transition-all">
                                 <option value="any">Any Difficulty</option>
                                 <option value="easy">Easy</option>
                                 <option value="medium" selected>Medium</option>
@@ -40,9 +119,9 @@
                             </select>
                         </div>
                     </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                        <select id="category" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                    <div class="mb-6">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2 font-medium">Category</label>
+                        <select id="category" class="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:ring-2 focus:ring-premium-accent focus:border-premium-accent transition-all">
                             <option value="any">Any Category</option>
                             <option value="9">General Knowledge</option>
                             <option value="10">Books</option>
@@ -62,57 +141,104 @@
                             <option value="31">Anime & Manga</option>
                         </select>
                     </div>
-                    <button id="start-quiz" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Start Quiz</button>
+                    <button id="start-quiz" class="w-full bg-premium-accent hover:bg-premium-accent/90 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] shadow-md flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        Start Quiz
+                    </button>
                 </div>
-                
+
                 <!-- Loading State -->
                 <div id="loading" class="text-center py-12 hidden">
-                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-premium-accent"></div>
                     <p class="mt-4 text-lg">Loading questions...</p>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Powered by Open Trivia DB</p>
                 </div>
-                
+
                 <!-- Quiz Questions -->
                 <div id="quiz-questions" class="hidden">
                     <div class="flex justify-between items-center mb-6">
-                        <div class="text-lg font-semibold">Question <span id="current-question">1</span>/<span id="total-questions">10</span></div>
-                        <div class="text-lg font-semibold">Score: <span id="score">0</span></div>
-                    </div>
-                    
-                    <div class="mb-6">
-                        <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-4">
-                            <h3 id="question-text" class="text-xl font-semibold"></h3>
-                            <div id="question-category" class="text-sm text-gray-600 dark:text-gray-400 mt-2"></div>
+                        <div class="text-lg font-semibold bg-gray-200 dark:bg-gray-700 px-3 py-1 rounded-full">
+                            Question <span id="current-question">1</span>/<span id="total-questions">10</span>
                         </div>
-                        
-                        <div id="answers" class="grid grid-cols-1 gap-2">
+                        <div class="text-lg font-semibold bg-premium-accent text-white px-3 py-1 rounded-full">
+                            Score: <span id="score">0</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <div class="bg-blue-100 dark:bg-blue-900 p-6 rounded-xl mb-6 border-l-4 border-premium-accent">
+                            <div id="question-category" class="text-sm font-medium text-premium-accent dark:text-premium-gold mb-2"></div>
+                            <h3 id="question-text" class="text-xl font-semibold"></h3>
+                        </div>
+
+                        <div id="answers" class="grid grid-cols-1 gap-3">
                             <!-- Answers will be populated by JavaScript -->
                         </div>
                     </div>
-                    
+
                     <div id="feedback" class="mb-6 hidden">
                         <div id="feedback-content" class="p-4 rounded-lg"></div>
                     </div>
-                    
+
                     <div class="flex justify-between">
-                        <button id="next-question" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 hidden">Next Question</button>
-                        <button id="finish-quiz" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 hidden">Finish Quiz</button>
+                        <button id="next-question" class="bg-premium-accent hover:bg-premium-accent/90 text-white px-6 py-2 rounded-lg font-medium transition-all transform hover:scale-[1.02] shadow-md hidden">
+                            Next Question
+                        </button>
+                        <button id="finish-quiz" class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium transition-all transform hover:scale-[1.02] shadow-md hidden">
+                            Finish Quiz
+                        </button>
                     </div>
                 </div>
-                
+
                 <!-- Quiz Results -->
                 <div id="quiz-results" class="text-center py-8 hidden">
+                    <div class="flex justify-center mb-6">
+                        <svg class="w-24 h-24 trophy" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.997-6.428l-.003-.002-.006-.006-.016-.014-.047-.04a28.246 28.246 0 01-1.228-1.23C8.893 9.389 8.5 8.558 8.5 7.5V6h3v1.5c0 .928-.33 1.716-.888 2.366a27.023 27.023 0 01-1.03 1.128l-.012.011-.008.008-.003.002-.003.003z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
                     <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
                     <div class="text-6xl font-bold mb-4"><span id="final-score">0</span>/<span id="final-total">10</span></div>
                     <div id="performance-text" class="text-xl mb-6"></div>
-                    
-                    <div class="mb-6">
-                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2">
-                            <div id="score-bar" class="bg-blue-600 h-4 rounded-full" style="width: 0%"></div>
+
+                    <div class="flex justify-center mb-8">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full" viewBox="0 0 36 36">
+                                <path class="text-gray-200 dark:text-gray-700" 
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none" stroke="currentColor" stroke-width="3"/>
+                                <path class="text-premium-accent progress-ring__circle" 
+                                    stroke-dasharray="100, 100"
+                                    d="M18 2.0845
+                                    a 15.9155 15.9155 0 0 1 0 31.831
+                                    a 15.9155 15.9155 0 0 1 0 -31.831"
+                                    fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+                                <text x="18" y="20.5" class="text-sm font-bold fill-current text-gray-900 dark:text-white" text-anchor="middle" dy=".3em" id="score-percentage">0%</text>
+                            </svg>
                         </div>
-                        <div id="score-percentage" class="text-sm text-gray-600 dark:text-gray-400">0%</div>
                     </div>
-                    
-                    <button id="restart-quiz" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Play Again</button>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Correct</div>
+                            <div id="correct-count" class="text-2xl font-bold text-premium-correct">0</div>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-3 rounded-lg">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">Incorrect</div>
+                            <div id="incorrect-count" class="text-2xl font-bold text-premium-incorrect">0</div>
+                        </div>
+                    </div>
+
+                    <button id="restart-quiz" class="w-full bg-premium-accent hover:bg-premium-accent/90 text-white py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02] shadow-md flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                        Play Again
+                    </button>
                 </div>
             </div>
         </div>
@@ -124,58 +250,59 @@
         const loadingScreen = document.getElementById('loading');
         const quizQuestions = document.getElementById('quiz-questions');
         const quizResults = document.getElementById('quiz-results');
-        
+
         const questionCountSelect = document.getElementById('question-count');
         const difficultySelect = document.getElementById('difficulty');
         const categorySelect = document.getElementById('category');
         const startQuizButton = document.getElementById('start-quiz');
-        
+
         const currentQuestionElement = document.getElementById('current-question');
         const totalQuestionsElement = document.getElementById('total-questions');
         const scoreElement = document.getElementById('score');
         const questionTextElement = document.getElementById('question-text');
         const questionCategoryElement = document.getElementById('question-category');
         const answersContainer = document.getElementById('answers');
-        
+
         const feedbackElement = document.getElementById('feedback');
         const feedbackContentElement = document.getElementById('feedback-content');
         const nextQuestionButton = document.getElementById('next-question');
         const finishQuizButton = document.getElementById('finish-quiz');
-        
+
         const finalScoreElement = document.getElementById('final-score');
         const finalTotalElement = document.getElementById('final-total');
         const performanceTextElement = document.getElementById('performance-text');
-        const scoreBarElement = document.getElementById('score-bar');
         const scorePercentageElement = document.getElementById('score-percentage');
+        const correctCountElement = document.getElementById('correct-count');
+        const incorrectCountElement = document.getElementById('incorrect-count');
         const restartQuizButton = document.getElementById('restart-quiz');
-        
+
         // Quiz state
         let questions = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let answerSelected = false;
-        
+
         // Start the quiz
         async function startQuiz() {
             // Show loading screen
             quizSetup.classList.add('hidden');
             loadingScreen.classList.remove('hidden');
-            
+
             // Get quiz settings
             const amount = questionCountSelect.value;
             const difficulty = difficultySelect.value === 'any' ? '' : difficultySelect.value;
             const category = categorySelect.value === 'any' ? '' : categorySelect.value;
-            
+
             // Build API URL
             let apiUrl = `https://opentdb.com/api.php?amount=${amount}&type=multiple`;
             if (difficulty) apiUrl += `&difficulty=${difficulty}`;
             if (category) apiUrl += `&category=${category}`;
-            
+
             try {
                 // Fetch questions from API
                 const response = await fetch(apiUrl);
                 const data = await response.json();
-                
+
                 if (data.response_code === 0) {
                     // Process questions
                     questions = data.results.map(q => {
@@ -183,10 +310,10 @@
                         const question = decodeHTML(q.question);
                         const correctAnswer = decodeHTML(q.correct_answer);
                         const incorrectAnswers = q.incorrect_answers.map(a => decodeHTML(a));
-                        
+
                         // Shuffle answers
                         const answers = [...incorrectAnswers, correctAnswer].sort(() => Math.random() - 0.5);
-                        
+
                         return {
                             question,
                             answers,
@@ -195,22 +322,23 @@
                             difficulty: q.difficulty
                         };
                     });
-                    
+
                     // Reset quiz state
                     currentQuestionIndex = 0;
                     score = 0;
-                    
+
                     // Update UI
                     totalQuestionsElement.textContent = questions.length;
                     finalTotalElement.textContent = questions.length;
                     scoreElement.textContent = score;
-                    
+
                     // Show first question
                     showQuestion();
-                    
+
                     // Show quiz questions screen
                     loadingScreen.classList.add('hidden');
                     quizQuestions.classList.remove('hidden');
+                    quizQuestions.classList.add('animate__fadeIn');
                 } else {
                     throw new Error('Failed to load questions');
                 }
@@ -218,132 +346,167 @@
                 console.error('Error fetching questions:', error);
                 loadingScreen.classList.add('hidden');
                 quizSetup.classList.remove('hidden');
-                alert('Failed to load questions. Please try again.');
+                
+                // Show error feedback
+                feedbackContentElement.innerHTML = `<div class="text-red-600 dark:text-red-400 font-semibold">Failed to load questions. Please try again.</div>`;
+                feedbackElement.className = 'mb-6 bg-red-100 dark:bg-red-900 p-4 rounded-lg';
+                feedbackElement.classList.remove('hidden');
             }
         }
-        
+
         // Show current question
         function showQuestion() {
             const question = questions[currentQuestionIndex];
-            
+
             // Update question number
             currentQuestionElement.textContent = currentQuestionIndex + 1;
-            
+
             // Update question text and category
             questionTextElement.textContent = question.question;
-            questionCategoryElement.textContent = `${question.category} (${question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)})`;
-            
+            questionCategoryElement.textContent = `${question.category} • ${question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)}`;
+
             // Clear previous answers
             answersContainer.innerHTML = '';
-            
+
             // Add answer buttons
             question.answers.forEach((answer, index) => {
                 const answerButton = document.createElement('button');
-                answerButton.className = 'text-left p-3 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700';
+                answerButton.className = 'answer-btn text-left p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-all';
                 answerButton.innerHTML = `<span class="font-semibold mr-2">${String.fromCharCode(65 + index)}.</span> ${answer}`;
                 answerButton.addEventListener('click', () => selectAnswer(answer));
                 answersContainer.appendChild(answerButton);
             });
-            
+
             // Reset state
             answerSelected = false;
             feedbackElement.classList.add('hidden');
             nextQuestionButton.classList.add('hidden');
             finishQuizButton.classList.add('hidden');
         }
-        
+
         // Handle answer selection
         function selectAnswer(selectedAnswer) {
             if (answerSelected) return;
-            
+
             const question = questions[currentQuestionIndex];
             const isCorrect = selectedAnswer === question.correctAnswer;
-            
+
             // Update score
             if (isCorrect) {
                 score++;
                 scoreElement.textContent = score;
             }
-            
+
             // Show feedback
             feedbackContentElement.innerHTML = isCorrect 
-                ? `<div class="text-green-600 dark:text-green-400 font-semibold">Correct! 🎉</div>`
-                : `<div class="text-red-600 dark:text-red-400 font-semibold">Incorrect! The correct answer is: ${question.correctAnswer}</div>`;
-            
+                ? `<div class="text-green-600 dark:text-green-400 font-semibold flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Correct! Well done!
+                   </div>`
+                : `<div class="text-red-600 dark:text-red-400 font-semibold flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                    </svg>
+                    Incorrect! The correct answer is: ${question.correctAnswer}
+                   </div>`;
+
             feedbackElement.className = isCorrect 
-                ? 'mb-6 bg-green-100 dark:bg-green-900 p-4 rounded-lg'
-                : 'mb-6 bg-red-100 dark:bg-red-900 p-4 rounded-lg';
-            
+                ? 'mb-6 bg-green-100 dark:bg-green-900 p-4 rounded-lg animate__animated animate__fadeIn'
+                : 'mb-6 bg-red-100 dark:bg-red-900 p-4 rounded-lg animate__animated animate__fadeIn';
+
             feedbackElement.classList.remove('hidden');
-            
+
             // Highlight correct and incorrect answers
             const answerButtons = answersContainer.querySelectorAll('button');
             answerButtons.forEach(button => {
                 const buttonAnswer = button.textContent.substring(3); // Remove "A. ", "B. ", etc.
-                
+
                 if (buttonAnswer === question.correctAnswer) {
-                    button.classList.add('bg-green-200', 'dark:bg-green-800', 'border-green-500');
+                    button.classList.add('correct', 'animate__animated', 'animate__pulse');
                 } else if (buttonAnswer === selectedAnswer && !isCorrect) {
-                    button.classList.add('bg-red-200', 'dark:bg-red-800', 'border-red-500');
+                    button.classList.add('incorrect');
                 }
-                
+
                 button.disabled = true;
             });
-            
+
             // Show next question or finish button
             if (currentQuestionIndex < questions.length - 1) {
                 nextQuestionButton.classList.remove('hidden');
+                nextQuestionButton.classList.add('animate__fadeIn');
             } else {
                 finishQuizButton.classList.remove('hidden');
+                finishQuizButton.classList.add('animate__fadeIn');
             }
-            
+
             answerSelected = true;
         }
-        
+
         // Move to next question
         function nextQuestion() {
             currentQuestionIndex++;
             showQuestion();
         }
-        
+
         // Finish quiz and show results
         function finishQuiz() {
             quizQuestions.classList.add('hidden');
             quizResults.classList.remove('hidden');
-            
+            quizResults.classList.add('animate__fadeIn');
+
             // Update final score
             finalScoreElement.textContent = score;
-            
+            correctCountElement.textContent = score;
+            incorrectCountElement.textContent = questions.length - score;
+
             // Calculate percentage
             const percentage = Math.round((score / questions.length) * 100);
-            scoreBarElement.style.width = `${percentage}%`;
-            scorePercentageElement.textContent = `${percentage}%`;
+            const circle = document.querySelector('.progress-ring__circle');
+            const radius = circle.r.baseVal.value;
+            const circumference = radius * 2 * Math.PI;
             
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference;
+            
+            const offset = circumference - (percentage / 100) * circumference;
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 100);
+            
+            scorePercentageElement.textContent = `${percentage}%`;
+
             // Set performance text
             if (percentage >= 90) {
-                performanceTextElement.textContent = 'Outstanding! You're a trivia master!';
+                performanceTextElement.textContent = 'Trivia Master! You\'re incredible!';
+                performanceTextElement.className = 'text-xl mb-6 text-premium-gold glow-text';
             } else if (percentage >= 70) {
-                performanceTextElement.textContent = 'Great job! You know your stuff!';
+                performanceTextElement.textContent = 'Excellent! You know your stuff!';
+                performanceTextElement.className = 'text-xl mb-6 text-green-500';
             } else if (percentage >= 50) {
-                performanceTextElement.textContent = 'Good effort! Room for improvement.';
+                performanceTextElement.textContent = 'Good effort! Keep learning!';
+                performanceTextElement.className = 'text-xl mb-6 text-blue-500';
             } else {
-                performanceTextElement.textContent = 'Keep practicing! You'll get better.';
+                performanceTextElement.textContent = 'Keep practicing! You\'ll get better!';
+                performanceTextElement.className = 'text-xl mb-6 text-premium-accent';
             }
         }
-        
+
         // Restart quiz
         function restartQuiz() {
             quizResults.classList.add('hidden');
             quizSetup.classList.remove('hidden');
+            quizSetup.classList.add('animate__fadeIn');
         }
-        
+
         // Helper function to decode HTML entities
         function decodeHTML(html) {
             const textarea = document.createElement('textarea');
             textarea.innerHTML = html;
             return textarea.value;
         }
-        
+
         // Event listeners
         startQuizButton.addEventListener('click', startQuiz);
         nextQuestionButton.addEventListener('click', nextQuestion);
