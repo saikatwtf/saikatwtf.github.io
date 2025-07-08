@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia Quiz - AI Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Trivia Quiz</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Test your knowledge with questions from Open Trivia DB</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <!-- Quiz Setup -->
+                <div id="quiz-setup" class="mb-6">
+                    <h2 class="text-2xl font-bold mb-4">Quiz Settings</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Number of Questions</label>
+                            <select id="question-count" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                                <option value="5">5 Questions</option>
+                                <option value="10" selected>10 Questions</option>
+                                <option value="15">15 Questions</option>
+                                <option value="20">20 Questions</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 dark:text-gray-300 mb-2">Difficulty</label>
+                            <select id="difficulty" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                                <option value="any">Any Difficulty</option>
+                                <option value="easy">Easy</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="hard">Hard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 dark:text-gray-300 mb-2">Category</label>
+                        <select id="category" class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700">
+                            <option value="any">Any Category</option>
+                            <option value="9">General Knowledge</option>
+                            <option value="10">Books</option>
+                            <option value="11">Film</option>
+                            <option value="12">Music</option>
+                            <option value="14">Television</option>
+                            <option value="15">Video Games</option>
+                            <option value="17">Science & Nature</option>
+                            <option value="18">Computers</option>
+                            <option value="19">Mathematics</option>
+                            <option value="21">Sports</option>
+                            <option value="22">Geography</option>
+                            <option value="23">History</option>
+                            <option value="24">Politics</option>
+                            <option value="27">Animals</option>
+                            <option value="28">Vehicles</option>
+                            <option value="31">Anime & Manga</option>
+                        </select>
+                    </div>
+                    <button id="start-quiz" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Start Quiz</button>
+                </div>
+                
+                <!-- Loading State -->
+                <div id="loading" class="text-center py-12 hidden">
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    <p class="mt-4 text-lg">Loading questions...</p>
+                </div>
+                
+                <!-- Quiz Questions -->
+                <div id="quiz-questions" class="hidden">
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="text-lg font-semibold">Question <span id="current-question">1</span>/<span id="total-questions">10</span></div>
+                        <div class="text-lg font-semibold">Score: <span id="score">0</span></div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <div class="bg-blue-100 dark:bg-blue-900 p-4 rounded-lg mb-4">
+                            <h3 id="question-text" class="text-xl font-semibold"></h3>
+                            <div id="question-category" class="text-sm text-gray-600 dark:text-gray-400 mt-2"></div>
+                        </div>
+                        
+                        <div id="answers" class="grid grid-cols-1 gap-2">
+                            <!-- Answers will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div id="feedback" class="mb-6 hidden">
+                        <div id="feedback-content" class="p-4 rounded-lg"></div>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <button id="next-question" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 hidden">Next Question</button>
+                        <button id="finish-quiz" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 hidden">Finish Quiz</button>
+                    </div>
+                </div>
+                
+                <!-- Quiz Results -->
+                <div id="quiz-results" class="text-center py-8 hidden">
+                    <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+                    <div class="text-6xl font-bold mb-4"><span id="final-score">0</span>/<span id="final-total">10</span></div>
+                    <div id="performance-text" class="text-xl mb-6"></div>
+                    
+                    <div class="mb-6">
+                        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 mb-2">
+                            <div id="score-bar" class="bg-blue-600 h-4 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <div id="score-percentage" class="text-sm text-gray-600 dark:text-gray-400">0%</div>
+                    </div>
+                    
+                    <button id="restart-quiz" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Play Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const quizSetup = document.getElementById('quiz-setup');
+        const loadingScreen = document.getElementById('loading');
+        const quizQuestions = document.getElementById('quiz-questions');
+        const quizResults = document.getElementById('quiz-results');
+        
+        const questionCountSelect = document.getElementById('question-count');
+        const difficultySelect = document.getElementById('difficulty');
+        const categorySelect = document.getElementById('category');
+        const startQuizButton = document.getElementById('start-quiz');
+        
+        const currentQuestionElement = document.getElementById('current-question');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const scoreElement = document.getElementById('score');
+        const questionTextElement = document.getElementById('question-text');
+        const questionCategoryElement = document.getElementById('question-category');
+        const answersContainer = document.getElementById('answers');
+        
+        const feedbackElement = document.getElementById('feedback');
+        const feedbackContentElement = document.getElementById('feedback-content');
+        const nextQuestionButton = document.getElementById('next-question');
+        const finishQuizButton = document.getElementById('finish-quiz');
+        
+        const finalScoreElement = document.getElementById('final-score');
+        const finalTotalElement = document.getElementById('final-total');
+        const performanceTextElement = document.getElementById('performance-text');
+        const scoreBarElement = document.getElementById('score-bar');
+        const scorePercentageElement = document.getElementById('score-percentage');
+        const restartQuizButton = document.getElementById('restart-quiz');
+        
+        // Quiz state
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answerSelected = false;
+        
+        // Start the quiz
+        async function startQuiz() {
+            // Show loading screen
+            quizSetup.classList.add('hidden');
+            loadingScreen.classList.remove('hidden');
+            
+            // Get quiz settings
+            const amount = questionCountSelect.value;
+            const difficulty = difficultySelect.value === 'any' ? '' : difficultySelect.value;
+            const category = categorySelect.value === 'any' ? '' : categorySelect.value;
+            
+            // Build API URL
+            let apiUrl = `https://opentdb.com/api.php?amount=${amount}&type=multiple`;
+            if (difficulty) apiUrl += `&difficulty=${difficulty}`;
+            if (category) apiUrl += `&category=${category}`;
+            
+            try {
+                // Fetch questions from API
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.response_code === 0) {
+                    // Process questions
+                    questions = data.results.map(q => {
+                        // Decode HTML entities
+                        const question = decodeHTML(q.question);
+                        const correctAnswer = decodeHTML(q.correct_answer);
+                        const incorrectAnswers = q.incorrect_answers.map(a => decodeHTML(a));
+                        
+                        // Shuffle answers
+                        const answers = [...incorrectAnswers, correctAnswer].sort(() => Math.random() - 0.5);
+                        
+                        return {
+                            question,
+                            answers,
+                            correctAnswer,
+                            category: q.category,
+                            difficulty: q.difficulty
+                        };
+                    });
+                    
+                    // Reset quiz state
+                    currentQuestionIndex = 0;
+                    score = 0;
+                    
+                    // Update UI
+                    totalQuestionsElement.textContent = questions.length;
+                    finalTotalElement.textContent = questions.length;
+                    scoreElement.textContent = score;
+                    
+                    // Show first question
+                    showQuestion();
+                    
+                    // Show quiz questions screen
+                    loadingScreen.classList.add('hidden');
+                    quizQuestions.classList.remove('hidden');
+                } else {
+                    throw new Error('Failed to load questions');
+                }
+            } catch (error) {
+                console.error('Error fetching questions:', error);
+                loadingScreen.classList.add('hidden');
+                quizSetup.classList.remove('hidden');
+                alert('Failed to load questions. Please try again.');
+            }
+        }
+        
+        // Show current question
+        function showQuestion() {
+            const question = questions[currentQuestionIndex];
+            
+            // Update question number
+            currentQuestionElement.textContent = currentQuestionIndex + 1;
+            
+            // Update question text and category
+            questionTextElement.textContent = question.question;
+            questionCategoryElement.textContent = `${question.category} (${question.difficulty.charAt(0).toUpperCase() + question.difficulty.slice(1)})`;
+            
+            // Clear previous answers
+            answersContainer.innerHTML = '';
+            
+            // Add answer buttons
+            question.answers.forEach((answer, index) => {
+                const answerButton = document.createElement('button');
+                answerButton.className = 'text-left p-3 border border-gray-300 dark:border-gray-600 rounded hover:bg-gray-100 dark:hover:bg-gray-700';
+                answerButton.innerHTML = `<span class="font-semibold mr-2">${String.fromCharCode(65 + index)}.</span> ${answer}`;
+                answerButton.addEventListener('click', () => selectAnswer(answer));
+                answersContainer.appendChild(answerButton);
+            });
+            
+            // Reset state
+            answerSelected = false;
+            feedbackElement.classList.add('hidden');
+            nextQuestionButton.classList.add('hidden');
+            finishQuizButton.classList.add('hidden');
+        }
+        
+        // Handle answer selection
+        function selectAnswer(selectedAnswer) {
+            if (answerSelected) return;
+            
+            const question = questions[currentQuestionIndex];
+            const isCorrect = selectedAnswer === question.correctAnswer;
+            
+            // Update score
+            if (isCorrect) {
+                score++;
+                scoreElement.textContent = score;
+            }
+            
+            // Show feedback
+            feedbackContentElement.innerHTML = isCorrect 
+                ? `<div class="text-green-600 dark:text-green-400 font-semibold">Correct! 🎉</div>`
+                : `<div class="text-red-600 dark:text-red-400 font-semibold">Incorrect! The correct answer is: ${question.correctAnswer}</div>`;
+            
+            feedbackElement.className = isCorrect 
+                ? 'mb-6 bg-green-100 dark:bg-green-900 p-4 rounded-lg'
+                : 'mb-6 bg-red-100 dark:bg-red-900 p-4 rounded-lg';
+            
+            feedbackElement.classList.remove('hidden');
+            
+            // Highlight correct and incorrect answers
+            const answerButtons = answersContainer.querySelectorAll('button');
+            answerButtons.forEach(button => {
+                const buttonAnswer = button.textContent.substring(3); // Remove "A. ", "B. ", etc.
+                
+                if (buttonAnswer === question.correctAnswer) {
+                    button.classList.add('bg-green-200', 'dark:bg-green-800', 'border-green-500');
+                } else if (buttonAnswer === selectedAnswer && !isCorrect) {
+                    button.classList.add('bg-red-200', 'dark:bg-red-800', 'border-red-500');
+                }
+                
+                button.disabled = true;
+            });
+            
+            // Show next question or finish button
+            if (currentQuestionIndex < questions.length - 1) {
+                nextQuestionButton.classList.remove('hidden');
+            } else {
+                finishQuizButton.classList.remove('hidden');
+            }
+            
+            answerSelected = true;
+        }
+        
+        // Move to next question
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+        
+        // Finish quiz and show results
+        function finishQuiz() {
+            quizQuestions.classList.add('hidden');
+            quizResults.classList.remove('hidden');
+            
+            // Update final score
+            finalScoreElement.textContent = score;
+            
+            // Calculate percentage
+            const percentage = Math.round((score / questions.length) * 100);
+            scoreBarElement.style.width = `${percentage}%`;
+            scorePercentageElement.textContent = `${percentage}%`;
+            
+            // Set performance text
+            if (percentage >= 90) {
+                performanceTextElement.textContent = 'Outstanding! You're a trivia master!';
+            } else if (percentage >= 70) {
+                performanceTextElement.textContent = 'Great job! You know your stuff!';
+            } else if (percentage >= 50) {
+                performanceTextElement.textContent = 'Good effort! Room for improvement.';
+            } else {
+                performanceTextElement.textContent = 'Keep practicing! You'll get better.';
+            }
+        }
+        
+        // Restart quiz
+        function restartQuiz() {
+            quizResults.classList.add('hidden');
+            quizSetup.classList.remove('hidden');
+        }
+        
+        // Helper function to decode HTML entities
+        function decodeHTML(html) {
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = html;
+            return textarea.value;
+        }
+        
+        // Event listeners
+        startQuizButton.addEventListener('click', startQuiz);
+        nextQuestionButton.addEventListener('click', nextQuestion);
+        finishQuizButton.addEventListener('click', finishQuiz);
+        restartQuizButton.addEventListener('click', restartQuiz);
+    </script>
+</body>
+</html>

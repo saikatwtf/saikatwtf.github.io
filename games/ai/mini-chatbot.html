@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini AI Chatbot - AI Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Mini AI Chatbot</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Chat with a rule-based AI assistant</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl mr-4">
+                        🤖
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold">SaikatBot</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">A rule-based AI assistant</p>
+                    </div>
+                </div>
+                
+                <div id="chat-container" class="h-96 overflow-y-auto mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <div class="flex mb-4">
+                        <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-2">
+                            🤖
+                        </div>
+                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[80%]">
+                            <p>Hello! I'm SaikatBot, your friendly AI assistant. How can I help you today?</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex">
+                    <input id="user-input" type="text" placeholder="Type your message..." class="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700">
+                    <button id="send-button" class="bg-blue-600 text-white px-6 py-3 rounded-r hover:bg-blue-700">Send</button>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="font-bold mb-2">Try asking about:</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Who are you?</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Tell me a joke</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">What's the weather?</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Tell me about yourself</button>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-sm text-gray-600 dark:text-gray-400">
+                    <p class="font-semibold">Bot Intelligence:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Pattern matching for common questions</li>
+                        <li>Context awareness for follow-up questions</li>
+                        <li>Sentiment analysis for emotional responses</li>
+                        <li>Knowledge base for factual information</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const chatContainer = document.getElementById('chat-container');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+        const suggestionButtons = document.querySelectorAll('.suggestion-btn');
+        
+        // Chat state
+        let chatHistory = [];
+        let context = {
+            topic: null,
+            lastQuestion: null,
+            userName: null,
+            mood: 'neutral' // neutral, happy, sad
+        };
+        
+        // Knowledge base
+        const knowledgeBase = {
+            bot: {
+                name: 'SaikatBot',
+                creator: 'Saikat',
+                purpose: 'to demonstrate rule-based AI chatbot capabilities',
+                abilities: ['answering questions', 'telling jokes', 'providing information', 'having simple conversations']
+            },
+            jokes: [
+                "Why don't scientists trust atoms? Because they make up everything!",
+                "Why did the JavaScript developer wear glasses? Because he couldn't C#!",
+                "How many programmers does it take to change a light bulb? None, that's a hardware problem!",
+                "Why do programmers prefer dark mode? Because light attracts bugs!",
+                "What's a computer's favorite snack? Microchips!"
+            ],
+            greetings: ['Hello', 'Hi', 'Hey there', 'Greetings', 'Welcome'],
+            farewells: ['Goodbye', 'Bye', 'See you later', 'Take care', 'Until next time']
+        };
+        
+        // Pattern matching rules
+        const rules = [
+            {
+                patterns: ['hello', 'hi', 'hey', 'greetings'],
+                responses: () => {
+                    const greeting = knowledgeBase.greetings[Math.floor(Math.random() * knowledgeBase.greetings.length)];
+                    return context.userName ? 
+                        `${greeting}, ${context.userName}! How can I help you today?` : 
+                        `${greeting}! How can I help you today?`;
+                },
+                updateContext: () => {
+                    context.topic = 'greeting';
+                    context.mood = 'happy';
+                }
+            },
+            {
+                patterns: ['bye', 'goodbye', 'see you', 'later'],
+                responses: () => {
+                    const farewell = knowledgeBase.farewells[Math.floor(Math.random() * knowledgeBase.farewells.length)];
+                    return context.userName ? 
+                        `${farewell}, ${context.userName}! Feel free to chat again anytime.` : 
+                        `${farewell}! Feel free to chat again anytime.`;
+                },
+                updateContext: () => {
+                    context.topic = 'farewell';
+                }
+            },
+            {
+                patterns: ['who are you', 'your name', 'about you', 'tell me about yourself'],
+                responses: () => {
+                    return `I'm ${knowledgeBase.bot.name}, a rule-based AI chatbot created by ${knowledgeBase.bot.creator}. I'm here ${knowledgeBase.bot.purpose}. I can help with ${knowledgeBase.bot.abilities.join(', ')}.`;
+                },
+                updateContext: () => {
+                    context.topic = 'bot_identity';
+                }
+            },
+            {
+                patterns: ['joke', 'funny', 'make me laugh'],
+                responses: () => {
+                    return knowledgeBase.jokes[Math.floor(Math.random() * knowledgeBase.jokes.length)];
+                },
+                updateContext: () => {
+                    context.topic = 'jokes';
+                    context.mood = 'happy';
+                }
+            },
+            {
+                patterns: ['weather', 'temperature', 'forecast'],
+                responses: () => {
+                    return "I don't have access to real-time weather data, but I can pretend! Let's say it's sunny with a chance of JavaScript errors. ☀️";
+                },
+                updateContext: () => {
+                    context.topic = 'weather';
+                }
+            },
+            {
+                patterns: ['thank', 'thanks', 'appreciate'],
+                responses: () => {
+                    return context.mood === 'happy' ? 
+                        "You're very welcome! It's my pleasure to help!" : 
+                        "You're welcome! Let me know if you need anything else.";
+                },
+                updateContext: () => {
+                    context.mood = 'happy';
+                }
+            },
+            {
+                patterns: ['sorry', 'apologize', 'my bad'],
+                responses: () => {
+                    return "No worries at all! I'm just a bot, so I don't have feelings to hurt.";
+                },
+                updateContext: () => {
+                    context.mood = 'neutral';
+                }
+            },
+            {
+                patterns: ['my name is', 'i am', 'call me'],
+                responses: (message) => {
+                    // Extract name
+                    let name = '';
+                    if (message.includes('my name is')) {
+                        name = message.split('my name is')[1].trim();
+                    } else if (message.includes('i am')) {
+                        name = message.split('i am')[1].trim();
+                    } else if (message.includes('call me')) {
+                        name = message.split('call me')[1].trim();
+                    }
+                    
+                    // Remove punctuation and get first word
+                    name = name.replace(/[^\w\s]/gi, '').split(' ')[0];
+                    context.userName = name;
+                    
+                    return `Nice to meet you, ${name}! How can I help you today?`;
+                },
+                updateContext: () => {
+                    context.topic = 'introduction';
+                    context.mood = 'happy';
+                }
+            },
+            {
+                patterns: ['how are you', 'how do you feel', 'are you ok'],
+                responses: () => {
+                    return "I'm just a program, so I don't have feelings, but thanks for asking! I'm functioning perfectly and ready to assist you.";
+                },
+                updateContext: () => {
+                    context.topic = 'bot_status';
+                }
+            },
+            {
+                patterns: ['help', 'what can you do', 'capabilities'],
+                responses: () => {
+                    return `I can help with ${knowledgeBase.bot.abilities.join(', ')}. Just ask me a question or try one of the suggested topics!`;
+                },
+                updateContext: () => {
+                    context.topic = 'help';
+                }
+            }
+        ];
+        
+        // Handle follow-up questions based on context
+        const followUpRules = {
+            'bot_identity': {
+                patterns: ['who created you', 'your creator', 'made you'],
+                responses: () => `I was created by ${knowledgeBase.bot.creator} as a demonstration of rule-based AI chatbots.`
+            },
+            'jokes': {
+                patterns: ['another', 'one more', 'tell me more'],
+                responses: () => knowledgeBase.jokes[Math.floor(Math.random() * knowledgeBase.jokes.length)]
+            }
+        };
+        
+        // Process user message
+        function processMessage(message) {
+            message = message.toLowerCase().trim();
+            
+            // Check for follow-up questions based on context
+            if (context.topic && followUpRules[context.topic]) {
+                const followUp = followUpRules[context.topic];
+                if (followUp.patterns.some(pattern => message.includes(pattern))) {
+                    return followUp.responses();
+                }
+            }
+            
+            // Check against pattern matching rules
+            for (const rule of rules) {
+                if (rule.patterns.some(pattern => message.includes(pattern))) {
+                    if (rule.updateContext) rule.updateContext();
+                    return rule.responses(message);
+                }
+            }
+            
+            // Default responses based on context
+            if (message.endsWith('?')) {
+                context.lastQuestion = message;
+                return "That's an interesting question! As a simple rule-based bot, I don't have enough knowledge to answer that accurately. Try asking me about myself, jokes, or use one of the suggested topics.";
+            }
+            
+            // Fallback response
+            return "I'm not sure how to respond to that. I'm a simple rule-based bot with limited capabilities. Try asking me about myself, for a joke, or use one of the suggested topics.";
+        }
+        
+        // Add message to chat
+        function addMessage(sender, message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'flex mb-4' + (isUser ? ' justify-end' : '');
+            
+            const avatar = document.createElement('div');
+            avatar.className = isUser ? 
+                'flex-shrink-0 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-sm ml-2' :
+                'flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-2';
+            avatar.textContent = isUser ? '👤' : '🤖';
+            
+            const bubble = document.createElement('div');
+            bubble.className = isUser ? 
+                'bg-green-100 dark:bg-green-900 p-3 rounded-lg max-w-[80%]' :
+                'bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[80%]';
+            
+            const text = document.createElement('p');
+            text.textContent = message;
+            
+            bubble.appendChild(text);
+            
+            if (isUser) {
+                messageDiv.appendChild(bubble);
+                messageDiv.appendChild(avatar);
+            } else {
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(bubble);
+            }
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Add to history
+            chatHistory.push({
+                sender,
+                message,
+                timestamp: new Date()
+            });
+        }
+        
+        // Handle user input
+        function handleUserInput() {
+            const message = userInput.value.trim();
+            if (!message) return;
+            
+            // Add user message to chat
+            addMessage('User', message, true);
+            
+            // Clear input
+            userInput.value = '';
+            
+            // Process message and get response
+            setTimeout(() => {
+                const response = processMessage(message);
+                addMessage('Bot', response);
+            }, 500);
+        }
+        
+        // Event listeners
+        sendButton.addEventListener('click', handleUserInput);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUserInput();
+        });
+        
+        suggestionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                userInput.value = button.textContent;
+                handleUserInput();
+            });
+        });
+    </script>
+</body>
+</html>

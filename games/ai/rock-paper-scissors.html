@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rock Paper Scissors AI - AI Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Rock Paper Scissors AI</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Play against an AI that learns your patterns</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <div class="text-lg font-semibold">Your Score: <span id="player-score">0</span></div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Win Rate: <span id="player-rate">0</span>%</div>
+                    </div>
+                    <div class="text-lg font-semibold">Round: <span id="round-count">0</span></div>
+                    <div>
+                        <div class="text-lg font-semibold">AI Score: <span id="ai-score">0</span></div>
+                        <div class="text-sm text-gray-600 dark:text-gray-400">Win Rate: <span id="ai-rate">0</span>%</div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center gap-8 mb-8">
+                    <div class="text-center">
+                        <div id="player-choice" class="text-8xl mb-2">❓</div>
+                        <div class="font-semibold">You</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">VS</div>
+                    </div>
+                    <div class="text-center">
+                        <div id="ai-choice" class="text-8xl mb-2">❓</div>
+                        <div class="font-semibold">AI</div>
+                    </div>
+                </div>
+                
+                <div id="result" class="text-center text-xl font-bold mb-8">Choose your move!</div>
+                
+                <div class="flex justify-center gap-4 mb-8">
+                    <button id="rock" class="choice-btn bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 p-4 rounded-lg">
+                        <div class="text-4xl">👊</div>
+                        <div>Rock</div>
+                    </button>
+                    <button id="paper" class="choice-btn bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 p-4 rounded-lg">
+                        <div class="text-4xl">✋</div>
+                        <div>Paper</div>
+                    </button>
+                    <button id="scissors" class="choice-btn bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 p-4 rounded-lg">
+                        <div class="text-4xl">✌️</div>
+                        <div>Scissors</div>
+                    </button>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button id="reset" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Reset Game</button>
+                    <div>
+                        <select id="ai-level" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded">
+                            <option value="random">Random AI</option>
+                            <option value="pattern" selected>Pattern Learning AI</option>
+                            <option value="advanced">Advanced AI</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="font-bold mb-2">AI Intelligence:</h3>
+                    <div class="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg">
+                        <p class="text-sm mb-2">The AI analyzes your previous moves to predict your next choice:</p>
+                        <div id="ai-thinking" class="text-sm font-mono">AI is learning your patterns...</div>
+                    </div>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="font-bold mb-2">Last 10 Rounds:</h3>
+                    <div id="history" class="grid grid-cols-10 gap-1">
+                        <!-- History will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game elements
+        const playerChoiceDisplay = document.getElementById('player-choice');
+        const aiChoiceDisplay = document.getElementById('ai-choice');
+        const resultDisplay = document.getElementById('result');
+        const playerScoreDisplay = document.getElementById('player-score');
+        const aiScoreDisplay = document.getElementById('ai-score');
+        const playerRateDisplay = document.getElementById('player-rate');
+        const aiRateDisplay = document.getElementById('ai-rate');
+        const roundCountDisplay = document.getElementById('round-count');
+        const historyDisplay = document.getElementById('history');
+        const aiThinkingDisplay = document.getElementById('ai-thinking');
+        const aiLevelSelect = document.getElementById('ai-level');
+        const resetButton = document.getElementById('reset');
+        const choiceButtons = document.querySelectorAll('.choice-btn');
+        
+        // Game state
+        let playerScore = 0;
+        let aiScore = 0;
+        let roundCount = 0;
+        let gameHistory = [];
+        
+        // Pattern tracking for AI
+        let playerMoves = [];
+        let patternFrequency = {
+            'rock': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'paper': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'scissors': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'rockrock': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'rockpaper': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'rockscissors': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'paperrock': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'paperpaper': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'paperscissors': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'scissorsrock': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'scissorspaper': { 'rock': 0, 'paper': 0, 'scissors': 0 },
+            'scissorsscissors': { 'rock': 0, 'paper': 0, 'scissors': 0 }
+        };
+        
+        // Choice emojis
+        const choiceEmojis = {
+            'rock': '👊',
+            'paper': '✋',
+            'scissors': '✌️'
+        };
+        
+        // Initialize game
+        function initGame() {
+            playerScore = 0;
+            aiScore = 0;
+            roundCount = 0;
+            gameHistory = [];
+            playerMoves = [];
+            
+            // Reset pattern frequency
+            Object.keys(patternFrequency).forEach(pattern => {
+                Object.keys(patternFrequency[pattern]).forEach(move => {
+                    patternFrequency[pattern][move] = 0;
+                });
+            });
+            
+            // Update displays
+            playerChoiceDisplay.textContent = '❓';
+            aiChoiceDisplay.textContent = '❓';
+            resultDisplay.textContent = 'Choose your move!';
+            playerScoreDisplay.textContent = '0';
+            aiScoreDisplay.textContent = '0';
+            playerRateDisplay.textContent = '0';
+            aiRateDisplay.textContent = '0';
+            roundCountDisplay.textContent = '0';
+            aiThinkingDisplay.textContent = 'AI is learning your patterns...';
+            
+            // Clear history display
+            historyDisplay.innerHTML = '';
+            for (let i = 0; i < 10; i++) {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'bg-gray-200 dark:bg-gray-700 h-8 flex items-center justify-center text-xs';
+                historyItem.textContent = '-';
+                historyDisplay.appendChild(historyItem);
+            }
+        }
+        
+        // AI makes a choice based on player patterns
+        function getAIChoice() {
+            const aiLevel = aiLevelSelect.value;
+            
+            if (aiLevel === 'random') {
+                // Random choice
+                const choices = ['rock', 'paper', 'scissors'];
+                return choices[Math.floor(Math.random() * 3)];
+            } else if (aiLevel === 'pattern') {
+                // Pattern-based choice
+                if (playerMoves.length < 2) {
+                    // Not enough data, make random choice
+                    const choices = ['rock', 'paper', 'scissors'];
+                    return choices[Math.floor(Math.random() * 3)];
+                }
+                
+                // Look at the last move
+                const lastMove = playerMoves[playerMoves.length - 1];
+                
+                // Check if we have pattern data
+                if (Object.values(patternFrequency[lastMove]).reduce((a, b) => a + b, 0) > 0) {
+                    // Predict next move based on pattern after last move
+                    const predictedMove = getPredictedMove(lastMove);
+                    
+                    // Choose counter move
+                    return getCounterMove(predictedMove);
+                }
+                
+                // If no pattern data, use random
+                const choices = ['rock', 'paper', 'scissors'];
+                return choices[Math.floor(Math.random() * 3)];
+            } else if (aiLevel === 'advanced') {
+                // Advanced pattern recognition
+                if (playerMoves.length < 3) {
+                    // Not enough data, make random choice
+                    const choices = ['rock', 'paper', 'scissors'];
+                    return choices[Math.floor(Math.random() * 3)];
+                }
+                
+                // Look at the last two moves
+                const lastTwoMoves = playerMoves.slice(-2).join('');
+                
+                // Check if we have pattern data for two-move sequence
+                if (Object.values(patternFrequency[lastTwoMoves]).reduce((a, b) => a + b, 0) > 0) {
+                    // Predict next move based on pattern after last two moves
+                    const predictedMove = getPredictedMove(lastTwoMoves);
+                    
+                    // Choose counter move
+                    return getCounterMove(predictedMove);
+                }
+                
+                // Fall back to single move pattern
+                const lastMove = playerMoves[playerMoves.length - 1];
+                if (Object.values(patternFrequency[lastMove]).reduce((a, b) => a + b, 0) > 0) {
+                    const predictedMove = getPredictedMove(lastMove);
+                    return getCounterMove(predictedMove);
+                }
+                
+                // If no pattern data, use random
+                const choices = ['rock', 'paper', 'scissors'];
+                return choices[Math.floor(Math.random() * 3)];
+            }
+        }
+        
+        // Predict player's next move based on pattern
+        function getPredictedMove(pattern) {
+            const moves = patternFrequency[pattern];
+            const rockFreq = moves.rock;
+            const paperFreq = moves.paper;
+            const scissorsFreq = moves.scissors;
+            
+            // Find the most frequent move after this pattern
+            if (rockFreq >= paperFreq && rockFreq >= scissorsFreq) {
+                return 'rock';
+            } else if (paperFreq >= rockFreq && paperFreq >= scissorsFreq) {
+                return 'paper';
+            } else {
+                return 'scissors';
+            }
+        }
+        
+        // Get counter move to beat predicted move
+        function getCounterMove(move) {
+            if (move === 'rock') return 'paper';
+            if (move === 'paper') return 'scissors';
+            return 'rock';
+        }
+        
+        // Update pattern frequency based on player's moves
+        function updatePatternFrequency(playerMove) {
+            if (playerMoves.length > 0) {
+                const lastMove = playerMoves[playerMoves.length - 1];
+                patternFrequency[lastMove][playerMove]++;
+                
+                if (playerMoves.length > 1) {
+                    const lastTwoMoves = playerMoves.slice(-2).join('');
+                    patternFrequency[lastTwoMoves][playerMove]++;
+                }
+            }
+            
+            playerMoves.push(playerMove);
+        }
+        
+        // Update AI thinking display
+        function updateAIThinking() {
+            if (playerMoves.length < 2) {
+                aiThinkingDisplay.textContent = 'AI is learning your patterns...';
+                return;
+            }
+            
+            const aiLevel = aiLevelSelect.value;
+            if (aiLevel === 'random') {
+                aiThinkingDisplay.textContent = 'AI is making random choices.';
+                return;
+            }
+            
+            let thinkingText = '';
+            
+            if (aiLevel === 'advanced' && playerMoves.length >= 3) {
+                const lastTwoMoves = playerMoves.slice(-2).join('');
+                const pattern = patternFrequency[lastTwoMoves];
+                thinkingText = `After ${lastTwoMoves[0]}-${lastTwoMoves[1]}: Rock: ${pattern.rock}, Paper: ${pattern.paper}, Scissors: ${pattern.scissors}`;
+            } else {
+                const lastMove = playerMoves[playerMoves.length - 1];
+                const pattern = patternFrequency[lastMove];
+                thinkingText = `After ${lastMove}: Rock: ${pattern.rock}, Paper: ${pattern.paper}, Scissors: ${pattern.scissors}`;
+            }
+            
+            aiThinkingDisplay.textContent = thinkingText;
+        }
+        
+        // Update history display
+        function updateHistory(playerChoice, aiChoice, result) {
+            const historyItem = {
+                playerChoice,
+                aiChoice,
+                result
+            };
+            
+            gameHistory.unshift(historyItem);
+            if (gameHistory.length > 10) {
+                gameHistory.pop();
+            }
+            
+            historyDisplay.innerHTML = '';
+            gameHistory.forEach(item => {
+                const historyElement = document.createElement('div');
+                historyElement.className = 'bg-gray-200 dark:bg-gray-700 h-8 flex items-center justify-center text-xs';
+                
+                if (item.result === 'win') {
+                    historyElement.classList.add('bg-green-200', 'dark:bg-green-800');
+                } else if (item.result === 'lose') {
+                    historyElement.classList.add('bg-red-200', 'dark:bg-red-800');
+                } else {
+                    historyElement.classList.add('bg-gray-300', 'dark:bg-gray-600');
+                }
+                
+                historyElement.textContent = choiceEmojis[item.playerChoice];
+                historyDisplay.appendChild(historyElement);
+            });
+            
+            // Fill remaining slots
+            for (let i = gameHistory.length; i < 10; i++) {
+                const historyElement = document.createElement('div');
+                historyElement.className = 'bg-gray-200 dark:bg-gray-700 h-8 flex items-center justify-center text-xs';
+                historyElement.textContent = '-';
+                historyDisplay.appendChild(historyElement);
+            }
+        }
+        
+        // Play a round
+        function playRound(playerChoice) {
+            // AI makes a choice
+            const aiChoice = getAIChoice();
+            
+            // Update displays
+            playerChoiceDisplay.textContent = choiceEmojis[playerChoice];
+            aiChoiceDisplay.textContent = choiceEmojis[aiChoice];
+            
+            // Determine winner
+            let result;
+            if (playerChoice === aiChoice) {
+                result = 'draw';
+                resultDisplay.textContent = "It's a draw!";
+            } else if (
+                (playerChoice === 'rock' && aiChoice === 'scissors') ||
+                (playerChoice === 'paper' && aiChoice === 'rock') ||
+                (playerChoice === 'scissors' && aiChoice === 'paper')
+            ) {
+                result = 'win';
+                playerScore++;
+                resultDisplay.textContent = "You win!";
+            } else {
+                result = 'lose';
+                aiScore++;
+                resultDisplay.textContent = "AI wins!";
+            }
+            
+            // Update score displays
+            playerScoreDisplay.textContent = playerScore;
+            aiScoreDisplay.textContent = aiScore;
+            
+            // Update round count
+            roundCount++;
+            roundCountDisplay.textContent = roundCount;
+            
+            // Update win rates
+            const playerRate = Math.round((playerScore / roundCount) * 100);
+            const aiRate = Math.round((aiScore / roundCount) * 100);
+            playerRateDisplay.textContent = playerRate;
+            aiRateDisplay.textContent = aiRate;
+            
+            // Update history
+            updateHistory(playerChoice, aiChoice, result);
+            
+            // Update pattern frequency
+            updatePatternFrequency(playerChoice);
+            
+            // Update AI thinking display
+            updateAIThinking();
+        }
+        
+        // Event listeners
+        choiceButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const playerChoice = button.id;
+                playRound(playerChoice);
+            });
+        });
+        
+        resetButton.addEventListener('click', initGame);
+        aiLevelSelect.addEventListener('change', () => {
+            aiThinkingDisplay.textContent = 'AI is learning your patterns...';
+        });
+        
+        // Initialize the game
+        initGame();
+    </script>
+</body>
+</html>

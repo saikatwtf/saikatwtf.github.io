@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test - Creative Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Typing Speed Test</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Test your typing speed and accuracy</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-3xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-lg font-semibold">Time: <span id="timer">60</span>s</div>
+                    <div class="flex gap-4">
+                        <div class="text-lg font-semibold">WPM: <span id="wpm">0</span></div>
+                        <div class="text-lg font-semibold">Accuracy: <span id="accuracy">0</span>%</div>
+                    </div>
+                </div>
+                
+                <div id="text-display" class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mb-6 text-lg leading-relaxed min-h-40">
+                    Click "Start" to begin the typing test.
+                </div>
+                
+                <textarea id="text-input" class="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 mb-6" rows="5" placeholder="Start typing here..." disabled></textarea>
+                
+                <div class="flex justify-between">
+                    <div>
+                        <select id="difficulty" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded mr-2">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                        </select>
+                        <select id="time" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded">
+                            <option value="30">30 seconds</option>
+                            <option value="60" selected>1 minute</option>
+                            <option value="120">2 minutes</option>
+                        </select>
+                    </div>
+                    <button id="start-btn" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Start</button>
+                </div>
+                
+                <div id="results" class="mt-6 hidden">
+                    <h3 class="text-xl font-bold mb-2">Results</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600 dark:text-blue-400"><span id="final-wpm">0</span></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Words Per Minute</div>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600 dark:text-green-400"><span id="final-accuracy">0</span>%</div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Accuracy</div>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600 dark:text-purple-400"><span id="correct-chars">0</span></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Correct Characters</div>
+                        </div>
+                        <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-red-600 dark:text-red-400"><span id="wrong-chars">0</span></div>
+                            <div class="text-sm text-gray-600 dark:text-gray-400">Wrong Characters</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const textDisplay = document.getElementById('text-display');
+        const textInput = document.getElementById('text-input');
+        const startBtn = document.getElementById('start-btn');
+        const timerElement = document.getElementById('timer');
+        const wpmElement = document.getElementById('wpm');
+        const accuracyElement = document.getElementById('accuracy');
+        const difficultySelect = document.getElementById('difficulty');
+        const timeSelect = document.getElementById('time');
+        const resultsDiv = document.getElementById('results');
+        const finalWpmElement = document.getElementById('final-wpm');
+        const finalAccuracyElement = document.getElementById('final-accuracy');
+        const correctCharsElement = document.getElementById('correct-chars');
+        const wrongCharsElement = document.getElementById('wrong-chars');
+        
+        let timer;
+        let timeLeft;
+        let currentText = '';
+        let startTime;
+        let correctChars = 0;
+        let wrongChars = 0;
+        
+        // Sample texts for different difficulty levels
+        const texts = {
+            easy: [
+                "The quick brown fox jumps over the lazy dog. This simple sentence contains all the letters in the English alphabet.",
+                "Learning to type quickly and accurately is an essential skill in today's digital world. Practice makes perfect.",
+                "Typing tests measure your typing speed and accuracy. They help you improve your keyboard skills over time."
+            ],
+            medium: [
+                "Programming is the process of creating a set of instructions that tell a computer how to perform a task. Programming can be done using a variety of computer languages.",
+                "The Internet is a global network of computers that works much like the postal system, only at sub-second speeds. Just as the postal service enables people to send packages, the Internet enables computers to send data.",
+                "Artificial intelligence is the simulation of human intelligence processes by machines, especially computer systems. These processes include learning, reasoning, and self-correction."
+            ],
+            hard: [
+                "The intricate relationship between quantum mechanics and general relativity remains one of the most profound mysteries in modern physics, challenging our fundamental understanding of space, time, and the nature of reality itself.",
+                "Cryptocurrency operates on a technology called blockchain, which is a decentralized ledger enforced by a disparate network of computers. This creates a secure and immutable record of transactions without the need for a trusted third party.",
+                "The human brain contains approximately 86 billion neurons, forming trillions of neural connections that facilitate our thoughts, emotions, and consciousness through electrochemical processes that scientists are still working to fully understand."
+            ]
+        };
+        
+        // Get random text based on difficulty
+        function getRandomText(difficulty) {
+            const textArray = texts[difficulty];
+            return textArray[Math.floor(Math.random() * textArray.length)];
+        }
+        
+        // Start the typing test
+        function startTest() {
+            // Reset variables
+            timeLeft = parseInt(timeSelect.value);
+            timerElement.textContent = timeLeft;
+            correctChars = 0;
+            wrongChars = 0;
+            wpmElement.textContent = '0';
+            accuracyElement.textContent = '0';
+            
+            // Get random text
+            const difficulty = difficultySelect.value;
+            currentText = getRandomText(difficulty);
+            
+            // Display text with highlighting
+            displayText();
+            
+            // Enable input
+            textInput.disabled = false;
+            textInput.value = '';
+            textInput.focus();
+            
+            // Start timer
+            startTime = new Date().getTime();
+            timer = setInterval(updateTimer, 1000);
+            
+            // Hide results
+            resultsDiv.classList.add('hidden');
+            
+            // Disable start button
+            startBtn.disabled = true;
+            startBtn.classList.add('opacity-50');
+        }
+        
+        // Display text with highlighting for current position
+        function displayText() {
+            textDisplay.innerHTML = currentText;
+        }
+        
+        // Update timer
+        function updateTimer() {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            // Calculate current WPM
+            calculateWPM();
+            
+            if (timeLeft <= 0) {
+                endTest();
+            }
+        }
+        
+        // Calculate words per minute
+        function calculateWPM() {
+            const currentTime = new Date().getTime();
+            const elapsedTime = (currentTime - startTime) / 1000 / 60; // in minutes
+            const typedChars = textInput.value.length;
+            const wpm = Math.round((typedChars / 5) / elapsedTime); // 5 chars = 1 word
+            
+            wpmElement.textContent = wpm;
+            
+            // Calculate accuracy
+            const totalChars = correctChars + wrongChars;
+            const accuracy = totalChars > 0 ? Math.round((correctChars / totalChars) * 100) : 0;
+            accuracyElement.textContent = accuracy;
+        }
+        
+        // End the typing test
+        function endTest() {
+            clearInterval(timer);
+            textInput.disabled = true;
+            
+            // Calculate final results
+            calculateWPM();
+            
+            // Show results
+            finalWpmElement.textContent = wpmElement.textContent;
+            finalAccuracyElement.textContent = accuracyElement.textContent;
+            correctCharsElement.textContent = correctChars;
+            wrongCharsElement.textContent = wrongChars;
+            resultsDiv.classList.remove('hidden');
+            
+            // Enable start button
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50');
+        }
+        
+        // Event listeners
+        startBtn.addEventListener('click', startTest);
+        
+        textInput.addEventListener('input', () => {
+            const inputText = textInput.value;
+            const originalText = currentText.substring(0, inputText.length);
+            
+            // Check each character
+            for (let i = 0; i < inputText.length; i++) {
+                if (i >= originalText.length) {
+                    wrongChars++;
+                } else if (inputText[i] === originalText[i]) {
+                    correctChars++;
+                } else {
+                    wrongChars++;
+                }
+            }
+            
+            // Highlight text
+            let highlightedText = '';
+            for (let i = 0; i < currentText.length; i++) {
+                if (i < inputText.length) {
+                    if (inputText[i] === currentText[i]) {
+                        highlightedText += `<span class="text-green-600 dark:text-green-400">${currentText[i]}</span>`;
+                    } else {
+                        highlightedText += `<span class="text-red-600 dark:text-red-400">${currentText[i]}</span>`;
+                    }
+                } else {
+                    highlightedText += currentText[i];
+                }
+            }
+            textDisplay.innerHTML = highlightedText;
+            
+            // Calculate current WPM
+            calculateWPM();
+            
+            // Check if completed
+            if (inputText.length >= currentText.length) {
+                endTest();
+            }
+        });
+    </script>
+</body>
+</html>

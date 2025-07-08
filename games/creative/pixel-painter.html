@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Painter - Creative Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">Pixel Painter</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Create your own pixel art masterpiece</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex flex-wrap justify-between items-center mb-6">
+                    <div class="flex gap-2 mb-4 sm:mb-0">
+                        <input type="color" id="color-picker" class="w-12 h-10 cursor-pointer">
+                        <button id="eraser" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded hover:bg-gray-300 dark:hover:bg-gray-600">Eraser</button>
+                        <button id="clear" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Clear</button>
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="grid-size" class="bg-gray-200 dark:bg-gray-700 px-4 py-2 rounded">
+                            <option value="16">16×16</option>
+                            <option value="24">24×24</option>
+                            <option value="32" selected>32×32</option>
+                            <option value="48">48×48</option>
+                        </select>
+                        <button id="save" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save</button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center mb-6">
+                    <div id="color-palette" class="flex flex-wrap gap-2 max-w-md justify-center"></div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <div id="pixel-grid" class="border border-gray-400 bg-white grid"></div>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <a id="download-link" class="hidden bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Download Artwork</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const colorPicker = document.getElementById('color-picker');
+        const eraserBtn = document.getElementById('eraser');
+        const clearBtn = document.getElementById('clear');
+        const gridSizeSelect = document.getElementById('grid-size');
+        const saveBtn = document.getElementById('save');
+        const pixelGrid = document.getElementById('pixel-grid');
+        const colorPalette = document.getElementById('color-palette');
+        const downloadLink = document.getElementById('download-link');
+        
+        let currentColor = '#000000';
+        let isDrawing = false;
+        let gridSize = parseInt(gridSizeSelect.value);
+        
+        // Default color palette
+        const defaultColors = [
+            '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF', 
+            '#FFFF00', '#FF00FF', '#00FFFF', '#FFA500', '#800080',
+            '#008000', '#800000', '#008080', '#808000', '#C0C0C0'
+        ];
+        
+        // Create color palette
+        function createColorPalette() {
+            colorPalette.innerHTML = '';
+            defaultColors.forEach(color => {
+                const colorBtn = document.createElement('div');
+                colorBtn.className = 'w-8 h-8 rounded cursor-pointer';
+                colorBtn.style.backgroundColor = color;
+                colorBtn.addEventListener('click', () => {
+                    currentColor = color;
+                    colorPicker.value = color;
+                });
+                colorPalette.appendChild(colorBtn);
+            });
+        }
+        
+        // Create pixel grid
+        function createGrid() {
+            pixelGrid.innerHTML = '';
+            pixelGrid.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+            pixelGrid.style.width = `${Math.min(512, gridSize * 16)}px`;
+            pixelGrid.style.height = `${Math.min(512, gridSize * 16)}px`;
+            
+            for (let i = 0; i < gridSize * gridSize; i++) {
+                const pixel = document.createElement('div');
+                pixel.className = 'pixel bg-white';
+                pixel.style.border = '1px solid #eee';
+                
+                // Mouse events for drawing
+                pixel.addEventListener('mousedown', (e) => {
+                    isDrawing = true;
+                    pixel.style.backgroundColor = currentColor;
+                });
+                
+                pixel.addEventListener('mouseover', () => {
+                    if (isDrawing) {
+                        pixel.style.backgroundColor = currentColor;
+                    }
+                });
+                
+                // Touch events for mobile
+                pixel.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    pixel.style.backgroundColor = currentColor;
+                });
+                
+                pixel.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+                    if (element && element.classList.contains('pixel')) {
+                        element.style.backgroundColor = currentColor;
+                    }
+                });
+                
+                pixelGrid.appendChild(pixel);
+            }
+        }
+        
+        // Save artwork as PNG
+        function saveArtwork() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const pixelSize = 10;
+            
+            canvas.width = gridSize * pixelSize;
+            canvas.height = gridSize * pixelSize;
+            
+            // Fill canvas with white background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw pixels
+            const pixels = pixelGrid.querySelectorAll('.pixel');
+            pixels.forEach((pixel, index) => {
+                const row = Math.floor(index / gridSize);
+                const col = index % gridSize;
+                
+                ctx.fillStyle = pixel.style.backgroundColor || '#FFFFFF';
+                ctx.fillRect(col * pixelSize, row * pixelSize, pixelSize, pixelSize);
+            });
+            
+            // Create download link
+            const dataURL = canvas.toDataURL('image/png');
+            downloadLink.href = dataURL;
+            downloadLink.download = 'pixel-art.png';
+            downloadLink.classList.remove('hidden');
+        }
+        
+        // Event listeners
+        colorPicker.addEventListener('input', (e) => {
+            currentColor = e.target.value;
+        });
+        
+        eraserBtn.addEventListener('click', () => {
+            currentColor = '#FFFFFF';
+        });
+        
+        clearBtn.addEventListener('click', () => {
+            const pixels = pixelGrid.querySelectorAll('.pixel');
+            pixels.forEach(pixel => {
+                pixel.style.backgroundColor = '#FFFFFF';
+            });
+        });
+        
+        gridSizeSelect.addEventListener('change', () => {
+            gridSize = parseInt(gridSizeSelect.value);
+            createGrid();
+        });
+        
+        saveBtn.addEventListener('click', saveArtwork);
+        
+        document.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+        
+        document.addEventListener('touchend', () => {
+            isDrawing = false;
+        });
+        
+        // Initialize
+        createColorPalette();
+        createGrid();
+    </script>
+</body>
+</html>

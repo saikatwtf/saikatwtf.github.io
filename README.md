@@ -9,7 +9,7 @@ A modern, responsive portfolio website showcasing projects, games, and contact i
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Dark/Light Mode**: Toggle between themes with localStorage persistence
 - **GitHub Integration**: Dynamically fetches and displays public repositories
-- **Interactive Games**: 9 playable web games including board games and math games
+- **Interactive Games**: 15 playable web games including board games, math games, creative games, and AI games
 - **Smooth Navigation**: Sticky navbar with smooth scrolling
 - **SEO Optimized**: Meta tags and Open Graph support
 - **Contact Integration**: Direct Telegram links and bot integration
@@ -30,10 +30,18 @@ saikatwtf.github.io/
 │   ├── snake-ladder.html
 │   ├── sudoku.html
 │   ├── flappy-bird.html
-│   └── math/
-│       ├── 24-game.html
-│       ├── arithmetic-memory.html
-│       └── math-blaster.html
+│   ├── math/
+│   │   ├── 24-game.html
+│   │   ├── arithmetic-memory.html
+│   │   └── math-blaster.html
+│   ├── creative/
+│   │   ├── pixel-painter.html
+│   │   ├── typing-test.html
+│   │   └── wordle.html
+│   └── ai/
+│       ├── rock-paper-scissors.html
+│       ├── trivia-quiz.html
+│       └── mini-chatbot.html
 ├── README.md
 └── LICENSE
 ```
@@ -52,6 +60,16 @@ saikatwtf.github.io/
 7. **24 Game** - Use four numbers and operations to make 24
 8. **Arithmetic Memory** - Match equations with their correct answers
 9. **Math Blaster** - Solve math problems to blast asteroids
+
+### Creative Games
+10. **Pixel Painter** - Create your own pixel art masterpieces
+11. **Typing Speed Test** - Test your typing speed and accuracy
+12. **Wordle Clone** - Guess the 5-letter word in 6 tries
+
+### AI Games
+13. **Rock Paper Scissors AI** - Play against an AI that learns your patterns
+14. **Trivia Quiz** - Test your knowledge with API-powered questions
+15. **Mini AI Chatbot** - Chat with a rule-based AI assistant
 
 ## GitHub Pages Deployment
 
