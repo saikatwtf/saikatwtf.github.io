@@ -11,7 +11,6 @@
     <meta property="og:type" content="website">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -19,22 +18,7 @@
                 extend: {
                     animation: {
                         'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.6s ease-out',
-                        'float': 'float 6s ease-in-out infinite',
-                        'gradient': 'gradient 8s ease infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        gradient: {
-                            '0%, 100%': { 'background-position': '0% 50%' },
-                            '50%': { 'background-position': '100% 50%' },
-                        }
-                    },
-                    backgroundSize: {
-                        '300%': '300%'
+                        'slide-up': 'slideUp 0.6s ease-out'
                     }
                 }
             }
@@ -44,415 +28,177 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         html { scroll-behavior: smooth; }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: #1f2937;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #4b5563;
-        }
-        
-        /* Gradient text */
-        .gradient-text {
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 300% 300%;
-            animation: gradient 8s ease infinite;
-        }
-        
-        /* Glass morphism effect */
-        .glass {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .dark .glass {
-            background: rgba(0, 0, 0, 0.1);
-        }
     </style>
 </head>
-<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 font-sans antialiased">
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div class="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8">
+    <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-700">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
-                <div class="text-2xl font-bold flex items-center">
-                    <span class="gradient-text">Saikat</span>
+                <div class="text-xl font-bold">Saikat</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
+                    <a href="#repos" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Projects</a>
+                    <a href="#games" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Games</a>
+                    <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
                 </div>
-                <div class="hidden md:flex space-x-8 items-center">
-                    <a href="#home" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Home</a>
-                    <a href="#repos" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Projects</a>
-                    <a href="#games" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Games</a>
-                    <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium">Contact</a>
-                    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-moon dark:hidden"></i>
-                        <i class="fas fa-sun hidden dark:inline"></i>
-                    </button>
-                </div>
-                <div class="md:hidden flex items-center space-x-4">
-                    <button id="theme-toggle-mobile" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-moon dark:hidden"></i>
-                        <i class="fas fa-sun hidden dark:inline"></i>
-                    </button>
-                    <button id="mobile-menu-button" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-            <div class="px-5 py-3 space-y-3">
-                <a href="#home" class="block py-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
-                <a href="#repos" class="block py-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Projects</a>
-                <a href="#games" class="block py-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Games</a>
-                <a href="#contact" class="block py-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
+                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                    <span class="dark:hidden">🌙</span>
+                    <span class="hidden dark:inline">☀️</span>
+                </button>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        <!-- Animated background elements -->
-        <div class="absolute inset-0 overflow-hidden z-0">
-            <div class="absolute top-20 left-20 w-40 h-40 rounded-full bg-blue-400 opacity-10 dark:opacity-5 animate-float"></div>
-            <div class="absolute bottom-20 right-20 w-60 h-60 rounded-full bg-purple-400 opacity-10 dark:opacity-5 animate-float" style="animation-delay: 2s;"></div>
-            <div class="absolute top-1/3 right-1/4 w-32 h-32 rounded-full bg-pink-400 opacity-10 dark:opacity-5 animate-float" style="animation-delay: 4s;"></div>
-        </div>
-        
-        <div class="max-w-5xl mx-auto text-center relative z-10 animate-fade-in">
-            <div class="w-40 h-40 mx-auto mb-8 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-xl">
+    <section id="home" class="min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto text-center animate-fade-in">
+            <div class="w-32 h-32 mx-auto mb-8 rounded-full overflow-hidden">
                 <img src="images/profile.jpg" alt="Saikat's Profile" class="w-full h-full object-cover">
             </div>
             <h1 class="text-4xl sm:text-6xl font-bold mb-4">
-                Hi, I'm <span class="gradient-text">Saikat</span>
+                Hi, I'm <span class="text-blue-600 dark:text-blue-400">Saikat</span>
             </h1>
-            <p class="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-2xl mx-auto">
-                A passionate developer specializing in bot development, automation, and creating engaging digital experiences.
+            <p class="text-xl sm:text-2xl text-gray-600 dark:text-gray-300 mb-8">
+                A passionate developer, bot builder, and automation enthusiast.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="https://github.com/saikatwtf" target="_blank" class="flex items-center justify-center gap-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors shadow hover:shadow-md">
-                    <i class="fab fa-github"></i> GitHub Profile
+                <a href="https://github.com/saikatwtf" target="_blank" class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-3 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors">
+                    GitHub Profile
                 </a>
-                <a href="#repos" class="flex items-center justify-center gap-2 border border-gray-300 dark:border-gray-600 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow hover:shadow-md">
-                    <i class="fas fa-code"></i> View Projects
-                </a>
-            </div>
-            
-            <!-- Social links -->
-            <div class="flex justify-center space-x-4 mt-8">
-                <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors">
-                    <i class="fab fa-twitter text-blue-400"></i>
-                </a>
-                <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-blue-600 dark:hover:bg-blue-900 transition-colors">
-                    <i class="fab fa-linkedin-in text-blue-600"></i>
-                </a>
-                <a href="#" class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center hover:bg-purple-600 dark:hover:bg-purple-900 transition-colors">
-                    <i class="fab fa-discord text-purple-600"></i>
-                </a>
-            </div>
-            
-            <!-- Scroll indicator -->
-            <div class="mt-16 animate-bounce">
-                <a href="#repos" class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 shadow-md flex items-center justify-center mx-auto">
-                    <i class="fas fa-chevron-down text-gray-600 dark:text-gray-300"></i>
+                <a href="#repos" class="border border-gray-300 dark:border-gray-600 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    View Projects
                 </a>
             </div>
         </div>
     </section>
 
     <!-- GitHub Repositories Section -->
-    <section id="repos" class="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-sm font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase">My Work</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Featured Projects</h2>
-                <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                    Here are some of my notable open-source projects and contributions.
-                </p>
-            </div>
-            
-            <div id="repos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Skeleton loader -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
-                    <div class="h-48 bg-gray-200 dark:bg-gray-700"></div>
-                    <div class="p-6">
-                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-3/4"></div>
-                        <div class="flex mt-4 space-x-4">
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                        </div>
-                    </div>
+    <section id="repos" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">GitHub Projects</h2>
+            <div id="repos-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="animate-pulse bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+                    <div class="h-4 bg-gray-300 dark:bg-gray-600 rounded mb-4"></div>
+                    <div class="h-3 bg-gray-300 dark:bg-gray-600 rounded mb-2"></div>
+                    <div class="h-3 bg-gray-300 dark:bg-gray-600 rounded w-2/3"></div>
                 </div>
-                
-                <!-- Repeat skeleton for loading state -->
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
-                    <div class="h-48 bg-gray-200 dark:bg-gray-700"></div>
-                    <div class="p-6">
-                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-3/4"></div>
-                        <div class="flex mt-4 space-x-4">
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden animate-pulse">
-                    <div class="h-48 bg-gray-200 dark:bg-gray-700"></div>
-                    <div class="p-6">
-                        <div class="h-6 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                        <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2 w-3/4"></div>
-                        <div class="flex mt-4 space-x-4">
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                            <div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="text-center mt-12">
-                <a href="https://github.com/saikatwtf?tab=repositories" target="_blank" class="inline-flex items-center px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm">
-                    <i class="fab fa-github mr-2"></i> View All Projects
-                </a>
             </div>
         </div>
     </section>
 
     <!-- Games Section -->
     <section id="games" class="py-20 px-4 sm:px-6 lg:px-8">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-sm font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase">Entertainment</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Game Collection</h2>
-                <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                    Explore my collection of interactive games built with modern web technologies.
-                </p>
-            </div>
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Games</h2>
 
             <!-- Board Games -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 flex items-center">
-                    <i class="fas fa-chess-board mr-3 text-blue-500"></i> Board Games
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-blue-500">⭕</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Tic-Tac-Toe</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Classic 3x3 grid game</p>
-                        <a href="games/tic-tac-toe.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-purple-500">♟️</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Chess</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Strategic board game</p>
-                        <a href="games/chess.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-yellow-500">🎲</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Ludo</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Classic dice board game</p>
-                        <a href="games/ludo.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-green-500">🐍</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Snake & Ladder</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Climb ladders, avoid snakes</p>
-                        <a href="games/snake-ladder.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-red-500">🔢</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Sudoku</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Number puzzle game</p>
-                        <a href="games/sudoku.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-blue-400">🐦</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Flappy Bird</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Navigate through pipes</p>
-                        <a href="games/flappy-bird.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
+            <h3 class="text-2xl font-bold mb-6">Board Games</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">⭕</div>
+                    <h3 class="text-xl font-semibold mb-2">Tic-Tac-Toe</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 3x3 grid game</p>
+                    <a href="games/tic-tac-toe.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">♟️</div>
+                    <h3 class="text-xl font-semibold mb-2">Chess</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Strategic board game</p>
+                    <a href="games/chess.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🎲</div>
+                    <h3 class="text-xl font-semibold mb-2">Ludo</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic dice board game</p>
+                    <a href="games/ludo.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🐍</div>
+                    <h3 class="text-xl font-semibold mb-2">Snake & Ladder</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Climb ladders, avoid snakes</p>
+                    <a href="games/snake-ladder.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🔢</div>
+                    <h3 class="text-xl font-semibold mb-2">Sudoku</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Number puzzle game</p>
+                    <a href="games/sudoku.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🐦</div>
+                    <h3 class="text-xl font-semibold mb-2">Flappy Bird</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Navigate through pipes</p>
+                    <a href="games/flappy-bird.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
                 </div>
             </div>
 
             <!-- Math Games -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 flex items-center">
-                    <i class="fas fa-square-root-alt mr-3 text-green-500"></i> Math Games
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-purple-500">2️⃣4️⃣</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">24 Game</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Make 24 with four numbers</p>
-                        <a href="games/math/24-game.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-blue-500">🧠</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Arithmetic Memory</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Match equations with answers</p>
-                        <a href="games/math/arithmetic-memory.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-red-500">🚀</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Math Blaster</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Solve problems to blast asteroids</p>
-                        <a href="games/math/math-blaster.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
+            <h3 class="text-2xl font-bold mt-16 mb-6">Math Games</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">2️⃣4️⃣</div>
+                    <h3 class="text-xl font-semibold mb-2">24 Game</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Make 24 with four numbers</p>
+                    <a href="games/math/24-game.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🧠</div>
+                    <h3 class="text-xl font-semibold mb-2">Arithmetic Memory</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Match equations with answers</p>
+                    <a href="games/math/arithmetic-memory.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🚀</div>
+                    <h3 class="text-xl font-semibold mb-2">Math Blaster</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Solve problems to blast asteroids</p>
+                    <a href="games/math/math-blaster.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
                 </div>
             </div>
 
             <!-- Creative Games -->
-            <div class="mb-16">
-                <h3 class="text-2xl font-bold mb-6 flex items-center">
-                    <i class="fas fa-paint-brush mr-3 text-yellow-500"></i> Creative Games
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-pink-500">🎨</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Pixel Painter</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Create pixel art masterpieces</p>
-                        <a href="games/creative/pixel-painter.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-blue-500">⌨️</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Typing Speed Test</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Test your typing skills</p>
-                        <a href="games/creative/typing-test.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-green-500">🔤</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Wordle Clone</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Guess the 5-letter word</p>
-                        <a href="games/creative/wordle.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
+            <h3 class="text-2xl font-bold mt-16 mb-6">Creative Games</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🎨</div>
+                    <h3 class="text-xl font-semibold mb-2">Pixel Painter</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Create pixel art masterpieces</p>
+                    <a href="games/creative/pixel-painter.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">⌨️</div>
+                    <h3 class="text-xl font-semibold mb-2">Typing Speed Test</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Test your typing skills</p>
+                    <a href="games/creative/typing-test.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🔤</div>
+                    <h3 class="text-xl font-semibold mb-2">Wordle Clone</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Guess the 5-letter word</p>
+                    <a href="games/creative/wordle.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
                 </div>
             </div>
 
             <!-- AI Games -->
-            <div>
-                <h3 class="text-2xl font-bold mb-6 flex items-center">
-                    <i class="fas fa-robot mr-3 text-purple-500"></i> AI Games
-                </h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-red-500">✂️</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Rock Paper Scissors AI</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">AI learns your patterns</p>
-                        <a href="games/ai/rock-paper-scissors.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-yellow-500">❓</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Trivia Quiz</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">API-powered trivia questions</p>
-                        <a href="games/ai/trivia-quiz.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                    
-                    <div class="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow animate-slide-up group overflow-hidden relative">
-                        <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                        <div class="text-5xl mb-4 text-center text-blue-500">🤖</div>
-                        <h3 class="text-xl font-semibold mb-2 text-center">Mini AI Chatbot</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4 text-center">Rule-based conversational AI</p>
-                        <a href="games/ai/mini-chatbot.html" class="block w-full text-center bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                            Play Now <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
+            <h3 class="text-2xl font-bold mt-16 mb-6">AI Games</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">✂️</div>
+                    <h3 class="text-xl font-semibold mb-2">Rock Paper Scissors AI</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">AI learns your patterns</p>
+                    <a href="games/ai/rock-paper-scissors.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Stats Section -->
-    <section class="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div class="max-w-7xl mx-auto">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="p-6 rounded-xl glass">
-                    <div class="text-4xl font-bold mb-2" id="projects-count">20+</div>
-                    <div class="text-sm uppercase tracking-wider">Projects</div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">❓</div>
+                    <h3 class="text-xl font-semibold mb-2">Trivia Quiz</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">API-powered trivia questions</p>
+                    <a href="games/ai/trivia-quiz.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
                 </div>
-                <div class="p-6 rounded-xl glass">
-                    <div class="text-4xl font-bold mb-2" id="games-count">15+</div>
-                    <div class="text-sm uppercase tracking-wider">Games</div>
-                </div>
-                <div class="p-6 rounded-xl glass">
-                    <div class="text-4xl font-bold mb-2" id="github-stars">100+</div>
-                    <div class="text-sm uppercase tracking-wider">GitHub Stars</div>
-                </div>
-                <div class="p-6 rounded-xl glass">
-                    <div class="text-4xl font-bold mb-2" id="bots-count">5+</div>
-                    <div class="text-sm uppercase tracking-wider">Bots Built</div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                    <div class="text-4xl mb-4">🤖</div>
+                    <h3 class="text-xl font-semibold mb-2">Mini AI Chatbot</h3>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">Rule-based conversational AI</p>
+                    <a href="games/ai/mini-chatbot.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
                 </div>
             </div>
         </div>
@@ -460,188 +206,30 @@
 
     <!-- Contact Section -->
     <section id="contact" class="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-800">
-        <div class="max-w-4xl mx-auto">
-            <div class="text-center mb-16">
-                <span class="text-sm font-semibold tracking-wider text-blue-600 dark:text-blue-400 uppercase">Connect</span>
-                <h2 class="text-3xl sm:text-4xl font-bold mt-2 mb-4">Get In Touch</h2>
-                <p class="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-                    Have a project in mind or want to collaborate? Feel free to reach out!
-                </p>
-            </div>
-            
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-3xl sm:text-4xl font-bold mb-12">Get In Touch</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <a href="https://t.me/saikatftw" target="_blank" class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow group overflow-hidden relative">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="fab fa-telegram text-3xl text-blue-600 dark:text-blue-400"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Telegram</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">Direct message me</p>
-                        <div class="text-blue-600 dark:text-blue-400 font-medium">@saikatftw</div>
-                    </div>
+                <a href="https://t.me/saikatftw" target="_blank" class="bg-blue-500 text-white p-6 rounded-lg hover:bg-blue-600 transition-colors">
+                    <div class="text-3xl mb-4">📱</div>
+                    <h3 class="text-xl font-semibold mb-2">Telegram</h3>
+                    <p>@saikatftw</p>
                 </a>
-                
-                <a href="https://t.me/AnnihilusOP_Bot" target="_blank" class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow group overflow-hidden relative">
-                    <div class="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <i class="fas fa-robot text-3xl text-purple-600 dark:text-purple-400"></i>
-                        </div>
-                        <h3 class="text-xl font-semibold mb-2">Telegram Bot</h3>
-                        <p class="text-gray-600 dark:text-gray-300 mb-4">Try my interactive bot</p>
-                        <div class="text-purple-600 dark:text-purple-400 font-medium">@AnnihilusOP_Bot</div>
-                    </div>
+                <a href="https://t.me/AnnihilusOP_Bot" target="_blank" class="bg-purple-500 text-white p-6 rounded-lg hover:bg-purple-600 transition-colors">
+                    <div class="text-3xl mb-4">🤖</div>
+                    <h3 class="text-xl font-semibold mb-2">Telegram Bot</h3>
+                    <p>@AnnihilusOP_Bot</p>
                 </a>
-            </div>
-            
-            <!-- Email form -->
-            <div class="mt-12 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-                <h3 class="text-xl font-semibold mb-6 text-center">Send me a message</h3>
-                <form class="space-y-4">
-                    <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                        <input type="text" id="name" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                    </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                        <input type="email" id="email" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white">
-                    </div>
-                    <div>
-                        <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
-                        <textarea id="message" rows="4" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"></textarea>
-                    </div>
-                    <button type="submit" class="w-full bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors shadow hover:shadow-md">
-                        Send Message <i class="fas fa-paper-plane ml-2"></i>
-                    </button>
-                </form>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-        <div class="max-w-7xl mx-auto">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-2xl font-bold mb-4 md:mb-0">
-                    <span class="gradient-text">Saikat</span>
-                </div>
-                
-                <div class="flex space-x-6">
-                    <a href="#home" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
-                    <a href="#repos" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Projects</a>
-                    <a href="#games" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Games</a>
-                    <a href="#contact" class="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
-                </div>
-            </div>
-            
-            <div class="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center">
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-4 md:mb-0">
-                    &copy; 2024 Saikat. All rights reserved.
-                </p>
-                
-                <div class="flex space-x-4">
-                    <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fab fa-github"></i>
-                    </a>
-                    <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                    <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fab fa-linkedin-in"></i>
-                    </a>
-                    <a href="#" class="text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                        <i class="fab fa-telegram"></i>
-                    </a>
-                </div>
-            </div>
+    <footer class="py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-200 dark:border-gray-700">
+        <div class="max-w-6xl mx-auto text-center text-gray-600 dark:text-gray-300">
+            <p>© 2025 Saikat. All rights reserved.</p>
         </div>
     </footer>
 
-    <!-- JavaScript -->
-    <script>
-        // Mobile menu toggle
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        const mobileMenu = document.getElementById('mobile-menu');
-        
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-        
-        // Theme toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeToggleMobile = document.getElementById('theme-toggle-mobile');
-        
-        function toggleTheme() {
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.remove('dark');
-                localStorage.setItem('color-theme', 'light');
-            } else {
-                document.documentElement.classList.add('dark');
-                localStorage.setItem('color-theme', 'dark');
-            }
-        }
-        
-        themeToggle.addEventListener('click', toggleTheme);
-        themeToggleMobile.addEventListener('click', toggleTheme);
-        
-        // Animate stats counters
-        function animateCounter(elementId, target, duration = 2000) {
-            const element = document.getElementById(elementId);
-            const start = 0;
-            const increment = target / (duration / 16);
-            let current = start;
-            
-            const timer = setInterval(() => {
-                current += increment;
-                if (current >= target) {
-                    clearInterval(timer);
-                    current = target;
-                }
-                element.textContent = Math.floor(current) + (elementId === 'projects-count' || elementId === 'games-count' || elementId === 'bots-count' ? '+' : '');
-            }, 16);
-        }
-        
-        // Start counters when stats section is in view
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    animateCounter('projects-count', 25);
-                    animateCounter('games-count', 15);
-                    animateCounter('github-stars', 120);
-                    animateCounter('bots-count', 8);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        const statsSection = document.querySelector('section.bg-gradient-to-r');
-        if (statsSection) {
-            observer.observe(statsSection);
-        }
-        
-        // Smooth scroll for anchor links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if (targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    // Close mobile menu if open
-                    if (!mobileMenu.classList.contains('hidden')) {
-                        mobileMenu.classList.add('hidden');
-                    }
-                    
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
