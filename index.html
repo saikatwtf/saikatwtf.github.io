@@ -28,9 +28,48 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         html { scroll-behavior: smooth; }
+        
+        /* Preload animation */
+        .preload {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .dark .preload {
+            background-color: #111827;
+        }
+        .preload.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #3b82f6;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-white transition-colors duration-300">
+    <!-- Preloader -->
+    <div id="preloader" class="preload">
+        <div class="loader"></div>
+    </div>
+
     <!-- Navigation -->
     <nav class="fixed top-0 w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md z-50 border-b border-gray-200 dark:border-gray-700">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,10 +81,26 @@
                     <a href="#games" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Games</a>
                     <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
                 </div>
-                <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                    <span class="dark:hidden">🌙</span>
-                    <span class="hidden dark:inline">☀️</span>
-                </button>
+                <div class="flex items-center space-x-3">
+                    <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <span class="dark:hidden">🌙</span>
+                        <span class="hidden dark:inline">☀️</span>
+                    </button>
+                    <button id="mobile-menu-button" class="md:hidden p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden px-4 py-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex flex-col space-y-3">
+                <a href="#home" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</a>
+                <a href="#repos" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Projects</a>
+                <a href="#games" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Games</a>
+                <a href="#contact" class="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Contact</a>
             </div>
         </div>
     </nav>
@@ -90,132 +145,152 @@
     <!-- Games Section -->
     <section id="games" class="py-20 px-4 sm:px-6 lg:px-8">
         <div class="max-w-6xl mx-auto">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Games</h2>
+            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-6">Games</h2>
+            
+            <!-- Game Filters -->
+            <div class="flex flex-wrap justify-center gap-2 mb-12">
+                <button class="game-filter active px-3 py-1 rounded-full bg-blue-600 text-white hover:bg-blue-700 transition-colors" data-filter="all">All Games</button>
+                <button class="game-filter px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="board">Board</button>
+                <button class="game-filter px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="math">Math</button>
+                <button class="game-filter px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="creative">Creative</button>
+                <button class="game-filter px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="retro">Retro</button>
+                <button class="game-filter px-3 py-1 rounded-full bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors" data-filter="ai">AI</button>
+            </div>
 
             <!-- Board Games -->
-            <h3 class="text-2xl font-bold mb-6">Board Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">⭕</div>
-                    <h3 class="text-xl font-semibold mb-2">Tic-Tac-Toe</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 3x3 grid game</p>
-                    <a href="games/tic-tac-toe.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">♟️</div>
-                    <h3 class="text-xl font-semibold mb-2">Chess</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Strategic board game</p>
-                    <a href="games/chess.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🎲</div>
-                    <h3 class="text-xl font-semibold mb-2">Ludo</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic dice board game</p>
-                    <a href="games/ludo.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🐍</div>
-                    <h3 class="text-xl font-semibold mb-2">Snake & Ladder</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Climb ladders, avoid snakes</p>
-                    <a href="games/snake-ladder.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🔢</div>
-                    <h3 class="text-xl font-semibold mb-2">Sudoku</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Number puzzle game</p>
-                    <a href="games/sudoku.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🐦</div>
-                    <h3 class="text-xl font-semibold mb-2">Flappy Bird</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Navigate through pipes</p>
-                    <a href="games/flappy-bird.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+            <div id="board-games" class="game-section" data-category="board">
+                <h3 class="text-2xl font-bold mb-6">Board Games</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">⭕</div>
+                        <h3 class="text-xl font-semibold mb-2">Tic-Tac-Toe</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 3x3 grid game</p>
+                        <a href="games/tic-tac-toe.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">♟️</div>
+                        <h3 class="text-xl font-semibold mb-2">Chess</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Strategic board game</p>
+                        <a href="games/chess.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🎲</div>
+                        <h3 class="text-xl font-semibold mb-2">Ludo</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Classic dice board game</p>
+                        <a href="games/ludo.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🐍</div>
+                        <h3 class="text-xl font-semibold mb-2">Snake & Ladder</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Climb ladders, avoid snakes</p>
+                        <a href="games/snake-ladder.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🔢</div>
+                        <h3 class="text-xl font-semibold mb-2">Sudoku</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Number puzzle game</p>
+                        <a href="games/sudoku.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🐦</div>
+                        <h3 class="text-xl font-semibold mb-2">Flappy Bird</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Navigate through pipes</p>
+                        <a href="games/flappy-bird.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
                 </div>
             </div>
-
+            
             <!-- Math Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">Math Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">2️⃣4️⃣</div>
-                    <h3 class="text-xl font-semibold mb-2">24 Game</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Make 24 with four numbers</p>
-                    <a href="games/math/24-game.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🧠</div>
-                    <h3 class="text-xl font-semibold mb-2">Arithmetic Memory</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Match equations with answers</p>
-                    <a href="games/math/arithmetic-memory.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🚀</div>
-                    <h3 class="text-xl font-semibold mb-2">Math Blaster</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Solve problems to blast asteroids</p>
-                    <a href="games/math/math-blaster.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+            <div id="math-games" class="game-section" data-category="math">
+                <h3 class="text-2xl font-bold mt-16 mb-6">Math Games</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">2️⃣4️⃣</div>
+                        <h3 class="text-xl font-semibold mb-2">24 Game</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Make 24 with four numbers</p>
+                        <a href="games/math/24-game.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🧠</div>
+                        <h3 class="text-xl font-semibold mb-2">Arithmetic Memory</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Match equations with answers</p>
+                        <a href="games/math/arithmetic-memory.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🚀</div>
+                        <h3 class="text-xl font-semibold mb-2">Math Blaster</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Solve problems to blast asteroids</p>
+                        <a href="games/math/math-blaster.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
                 </div>
             </div>
-
+            
             <!-- Creative Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">Creative Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🎨</div>
-                    <h3 class="text-xl font-semibold mb-2">Pixel Painter</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Create pixel art masterpieces</p>
-                    <a href="games/creative/pixel-painter.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">⌨️</div>
-                    <h3 class="text-xl font-semibold mb-2">Typing Speed Test</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Test your typing skills</p>
-                    <a href="games/creative/typing-test.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🔤</div>
-                    <h3 class="text-xl font-semibold mb-2">Wordle Clone</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Guess the 5-letter word</p>
-                    <a href="games/creative/wordle.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+            <div id="creative-games" class="game-section" data-category="creative">
+                <h3 class="text-2xl font-bold mt-16 mb-6">Creative Games</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🎨</div>
+                        <h3 class="text-xl font-semibold mb-2">Pixel Painter</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Create pixel art masterpieces</p>
+                        <a href="games/creative/pixel-painter.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">⌨️</div>
+                        <h3 class="text-xl font-semibold mb-2">Typing Speed Test</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Test your typing skills</p>
+                        <a href="games/creative/typing-test.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🔤</div>
+                        <h3 class="text-xl font-semibold mb-2">Wordle Clone</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Guess the 5-letter word</p>
+                        <a href="games/creative/wordle.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
                 </div>
             </div>
-
+            
             <!-- Retro Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">Retro Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🐍</div>
-                    <h3 class="text-xl font-semibold mb-2">Pixel Snake</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 8-bit snake game</p>
-                    <a href="games/retro/pixel-snake.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">👾</div>
-                    <h3 class="text-xl font-semibold mb-2">Block Invaders</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Space Invaders style game</p>
-                    <a href="games/retro/block-invaders.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+            <div id="retro-games" class="game-section" data-category="retro">
+                <h3 class="text-2xl font-bold mt-16 mb-6">Retro Games</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🐍</div>
+                        <h3 class="text-xl font-semibold mb-2">Pixel Snake</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 8-bit snake game</p>
+                        <a href="games/retro/pixel-snake.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">👾</div>
+                        <h3 class="text-xl font-semibold mb-2">Block Invaders</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Space Invaders style game</p>
+                        <a href="games/retro/block-invaders.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
                 </div>
             </div>
             
             <!-- AI Games -->
-            <h3 class="text-2xl font-bold mt-16 mb-6">AI Games</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">✂️</div>
-                    <h3 class="text-xl font-semibold mb-2">Rock Paper Scissors AI</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">AI learns your patterns</p>
-                    <a href="games/ai/rock-paper-scissors.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">❓</div>
-                    <h3 class="text-xl font-semibold mb-2">Trivia Quiz</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">API-powered trivia questions</p>
-                    <a href="games/ai/trivia-quiz.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
-                </div>
-                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
-                    <div class="text-4xl mb-4">🤖</div>
-                    <h3 class="text-xl font-semibold mb-2">Mini AI Chatbot</h3>
-                    <p class="text-gray-600 dark:text-gray-300 mb-4">Rule-based conversational AI</p>
-                    <a href="games/ai/mini-chatbot.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+            <div id="ai-games" class="game-section" data-category="ai">
+                <h3 class="text-2xl font-bold mt-16 mb-6">AI Games</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">✂️</div>
+                        <h3 class="text-xl font-semibold mb-2">Rock Paper Scissors AI</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">AI learns your patterns</p>
+                        <a href="games/ai/rock-paper-scissors.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">❓</div>
+                        <h3 class="text-xl font-semibold mb-2">Trivia Quiz</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">API-powered trivia questions</p>
+                        <a href="games/ai/trivia-quiz.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow animate-slide-up">
+                        <div class="text-4xl mb-4">🤖</div>
+                        <h3 class="text-xl font-semibold mb-2">Mini AI Chatbot</h3>
+                        <p class="text-gray-600 dark:text-gray-300 mb-4">Rule-based conversational AI</p>
+                        <a href="games/ai/mini-chatbot.html" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">Play Now</a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -240,6 +315,13 @@
         </div>
     </section>
 
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="fixed bottom-6 right-6 p-3 bg-blue-600 text-white rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:bg-blue-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+        </svg>
+    </button>
+
     <!-- Footer -->
     <footer class="py-8 px-4 sm:px-6 lg:px-8 border-t border-gray-200 dark:border-gray-700">
         <div class="max-w-6xl mx-auto text-center text-gray-600 dark:text-gray-300">
@@ -248,5 +330,83 @@
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+        
+        // Game filtering
+        const gameFilters = document.querySelectorAll('.game-filter');
+        const gameSections = document.querySelectorAll('.game-section');
+        
+        gameFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                // Update active filter
+                gameFilters.forEach(f => f.classList.remove('active', 'bg-blue-600', 'text-white'));
+                gameFilters.forEach(f => f.classList.add('bg-gray-200', 'dark:bg-gray-700'));
+                filter.classList.add('active', 'bg-blue-600', 'text-white');
+                filter.classList.remove('bg-gray-200', 'dark:bg-gray-700');
+                
+                const category = filter.getAttribute('data-filter');
+                
+                // Show/hide game sections
+                if (category === 'all') {
+                    gameSections.forEach(section => {
+                        section.style.display = 'block';
+                    });
+                } else {
+                    gameSections.forEach(section => {
+                        if (section.getAttribute('data-category') === category) {
+                            section.style.display = 'block';
+                        } else {
+                            section.style.display = 'none';
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('back-to-top');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.remove('opacity-0', 'invisible');
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.add('opacity-0', 'invisible');
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Preloader
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            setTimeout(() => {
+                preloader.classList.add('fade-out');
+                setTimeout(() => {
+                    preloader.style.display = 'none';
+                }, 500);
+            }, 500);
+        });
+    </script>
 </body>
 </html>
