@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pixel Snake - Retro Games</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
@@ -10,58 +10,71 @@
         canvas {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
-        }
-        @font-face {
-            font-family: 'PressStart2P';
-            src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+            touch-action: none; /* Prevent touch events from interfering */
         }
         .pixel-font {
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
         }
+        .control-btn {
+            transition: all 0.1s;
+            user-select: none;
+        }
+        .control-btn:active {
+            transform: scale(0.95);
+            background-color: #4B5563 !important; /* gray-600 */
+        }
+        @media (max-width: 640px) {
+            .game-container {
+                padding: 0.5rem;
+            }
+            .controls-container {
+                margin-top: 1rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4 pixel-font">PIXEL SNAKE</h1>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Classic 8-bit snake game</p>
-            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen select-none">
+    <div class="container mx-auto px-4 py-4 game-container">
+        <div class="text-center mb-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2 pixel-font">PIXEL SNAKE</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-2 text-sm md:text-base">Classic 8-bit snake game</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline text-sm md:text-base">← Back to Portfolio</a>
         </div>
         
         <div class="max-w-2xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-lg font-semibold pixel-font">SCORE: <span id="score">0</span></div>
-                    <div class="text-lg font-semibold pixel-font">HIGH SCORE: <span id="high-score">0</span></div>
+            <div class="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-base md:text-lg font-semibold pixel-font">SCORE: <span id="score">0</span></div>
+                    <div class="text-base md:text-lg font-semibold pixel-font">HIGH SCORE: <span id="high-score">0</span></div>
                 </div>
                 
-                <div class="flex justify-center mb-6">
-                    <canvas id="game-canvas" width="400" height="400" class="border-4 border-gray-800 dark:border-gray-600"></canvas>
+                <div class="flex justify-center mb-4">
+                    <canvas id="game-canvas" width="300" height="300" class="border-4 border-gray-800 dark:border-gray-600"></canvas>
                 </div>
                 
-                <div id="game-over" class="hidden text-center mb-6">
-                    <div class="text-2xl font-bold text-red-600 dark:text-red-400 pixel-font">GAME OVER</div>
-                    <div class="text-lg mt-2 pixel-font">PRESS SPACE TO RESTART</div>
+                <div id="game-over" class="hidden text-center mb-4">
+                    <div class="text-xl md:text-2xl font-bold text-red-600 dark:text-red-400 pixel-font">GAME OVER</div>
+                    <div class="text-base md:text-lg mt-2 pixel-font">PRESS SPACE TO RESTART</div>
                 </div>
                 
-                <div class="flex justify-center gap-4">
-                    <button id="start-btn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 pixel-font">START</button>
-                    <button id="pause-btn" class="bg-yellow-600 text-white px-6 py-2 rounded hover:bg-yellow-700 pixel-font">PAUSE</button>
+                <div class="flex justify-center gap-3 mb-4">
+                    <button id="start-btn" class="bg-green-600 text-white px-4 md:px-6 py-1 md:py-2 rounded hover:bg-green-700 pixel-font text-sm md:text-base">START</button>
+                    <button id="pause-btn" class="bg-yellow-600 text-white px-4 md:px-6 py-1 md:py-2 rounded hover:bg-yellow-700 pixel-font text-sm md:text-base">PAUSE</button>
                 </div>
                 
-                <div class="mt-6 text-center">
-                    <div class="text-lg font-semibold mb-2 pixel-font">CONTROLS</div>
+                <div class="mt-4 text-center controls-container">
+                    <div class="text-base md:text-lg font-semibold mb-2 pixel-font">CONTROLS</div>
                     <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
                         <div></div>
-                        <button id="up-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded">↑</button>
+                        <button id="up-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded control-btn">↑</button>
                         <div></div>
-                        <button id="left-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded">←</button>
-                        <button id="down-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded">↓</button>
-                        <button id="right-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded">→</button>
+                        <button id="left-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded control-btn">←</button>
+                        <button id="down-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded control-btn">↓</button>
+                        <button id="right-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded control-btn">→</button>
                     </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        Use arrow keys or buttons to control the snake
+                    <div class="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        Use arrow keys, buttons, or swipe to control
                     </div>
                 </div>
             </div>
@@ -82,15 +95,25 @@
         const leftBtn = document.getElementById('left-btn');
         const rightBtn = document.getElementById('right-btn');
         
+        // Adjust canvas size for mobile
+        function resizeCanvas() {
+            const maxWidth = Math.min(window.innerWidth - 40, 400);
+            const size = Math.floor(maxWidth / 20) * 20;
+            canvas.width = size;
+            canvas.height = size;
+            if (snake.length > 0) drawGame(); // Redraw if game is running
+        }
+        
         // Game settings
         const gridSize = 20;
-        const tileCount = canvas.width / gridSize;
+        let tileCount;
         const colors = {
-            background: '#000000',
-            snake: '#00FF00',
-            food: '#FF0000',
+            background: '#1a1a1a',
+            snake: '#4ade80', // green-400
+            snakeHead: '#22c55e', // green-500
+            food: '#ef4444', // red-500
             border: '#333333',
-            grid: '#111111'
+            grid: '#252525'
         };
         
         // Game state
@@ -100,10 +123,12 @@
         let nextDirection = 'right';
         let score = 0;
         let highScore = localStorage.getItem('snakeHighScore') || 0;
-        let gameSpeed = 100; // milliseconds
+        let gameSpeed = 150; // milliseconds
         let gameLoop;
         let isPaused = false;
         let isGameOver = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
         
         // Initialize game
         function initGame() {
@@ -121,6 +146,11 @@
             gameOverElement.classList.add('hidden');
             isGameOver = false;
             isPaused = false;
+            gameSpeed = 150;
+            
+            // Update canvas dimensions
+            resizeCanvas();
+            tileCount = canvas.width / gridSize;
             
             // Generate first food
             generateFood();
@@ -132,6 +162,9 @@
             // Update button states
             startBtn.textContent = 'RESTART';
             pauseBtn.textContent = 'PAUSE';
+            
+            // Draw initial state
+            drawGame();
         }
         
         // Generate food at random position
@@ -205,8 +238,8 @@
                 // Generate new food
                 generateFood();
                 
-                // Increase speed slightly
-                if (score % 5 === 0 && gameSpeed > 50) {
+                // Increase speed slightly (capped at minimum speed)
+                if (score % 3 === 0 && gameSpeed > 70) {
                     clearInterval(gameLoop);
                     gameSpeed -= 5;
                     gameLoop = setInterval(updateGame, gameSpeed);
@@ -246,17 +279,36 @@
                 }
             }
             
-            // Draw food
+            // Draw food with shine effect
             ctx.fillStyle = colors.food;
-            ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            ctx.beginPath();
+            ctx.roundRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize, 4);
+            ctx.fill();
+            
+            // Draw highlight on food
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.arc(
+                food.x * gridSize + gridSize * 0.3, 
+                food.y * gridSize + gridSize * 0.3, 
+                gridSize * 0.2, 
+                0, 
+                Math.PI * 2
+            );
+            ctx.fill();
             
             // Draw snake
-            ctx.fillStyle = colors.snake;
             for (let i = 0; i < snake.length; i++) {
-                ctx.fillRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize);
+                const isHead = i === 0;
+                ctx.fillStyle = isHead ? colors.snakeHead : colors.snake;
+                
+                // Draw rounded segments
+                ctx.beginPath();
+                ctx.roundRect(snake[i].x * gridSize, snake[i].y * gridSize, gridSize, gridSize, 3);
+                ctx.fill();
                 
                 // Draw eyes on head
-                if (i === 0) {
+                if (isHead) {
                     ctx.fillStyle = '#000000';
                     
                     // Position eyes based on direction
@@ -291,8 +343,13 @@
                             break;
                     }
                     
-                    ctx.fillRect(eyeX1, eyeY1, eyeSize, eyeSize);
-                    ctx.fillRect(eyeX2, eyeY2, eyeSize, eyeSize);
+                    // Draw eyes
+                    ctx.beginPath();
+                    ctx.arc(eyeX1, eyeY1, eyeSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(eyeX2, eyeY2, eyeSize, 0, Math.PI * 2);
+                    ctx.fill();
                 }
             }
         }
@@ -309,37 +366,80 @@
         function togglePause() {
             isPaused = !isPaused;
             pauseBtn.textContent = isPaused ? 'RESUME' : 'PAUSE';
+            if (!isPaused) drawGame(); // Redraw when unpausing
         }
         
         // Play sound
         function playSound(type) {
             // Simple beep sounds using Web Audio API
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            switch (type) {
-                case 'eat':
-                    oscillator.type = 'square';
-                    oscillator.frequency.value = 440;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    setTimeout(() => oscillator.stop(), 100);
-                    break;
-                case 'gameover':
-                    oscillator.type = 'sawtooth';
-                    oscillator.frequency.value = 200;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    
-                    // Descending tone
-                    oscillator.frequency.exponentialRampToValueAtTime(50, audioContext.currentTime + 0.5);
-                    setTimeout(() => oscillator.stop(), 500);
-                    break;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                switch (type) {
+                    case 'eat':
+                        oscillator.type = 'square';
+                        oscillator.frequency.value = 880;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+                        setTimeout(() => oscillator.stop(), 100);
+                        break;
+                    case 'gameover':
+                        oscillator.type = 'sawtooth';
+                        oscillator.frequency.value = 220;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        
+                        // Descending tone
+                        oscillator.frequency.exponentialRampToValueAtTime(55, audioContext.currentTime + 0.8);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.8);
+                        setTimeout(() => oscillator.stop(), 800);
+                        break;
+                }
+            } catch (e) {
+                console.log("Audio error:", e);
             }
+        }
+        
+        // Handle touch events for swipe controls
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+        
+        function handleTouchEnd(e) {
+            if (!touchStartX || !touchStartY) return;
+            
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            
+            // Determine primary direction
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                // Horizontal swipe
+                if (diffX > 0 && direction !== 'right') {
+                    nextDirection = 'left';
+                } else if (diffX < 0 && direction !== 'left') {
+                    nextDirection = 'right';
+                }
+            } else {
+                // Vertical swipe
+                if (diffY > 0 && direction !== 'down') {
+                    nextDirection = 'up';
+                } else if (diffY < 0 && direction !== 'up') {
+                    nextDirection = 'down';
+                }
+            }
+            
+            touchStartX = 0;
+            touchStartY = 0;
         }
         
         // Event listeners
@@ -391,9 +491,21 @@
         startBtn.addEventListener('click', initGame);
         pauseBtn.addEventListener('click', togglePause);
         
-        // Initial draw
-        drawGame();
-        highScoreElement.textContent = highScore;
+        // Touch events for swipe controls
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            if (!isGameOver) resizeCanvas();
+        });
+        
+        // Initialize on load
+        window.addEventListener('load', () => {
+            resizeCanvas();
+            tileCount = canvas.width / gridSize;
+            highScoreElement.textContent = highScore;
+        });
     </script>
 </body>
 </html>
