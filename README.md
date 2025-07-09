@@ -9,7 +9,7 @@ A modern, responsive portfolio website showcasing projects, games, and contact i
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Dark/Light Mode**: Toggle between themes with localStorage persistence
 - **GitHub Integration**: Dynamically fetches and displays public repositories
-- **Interactive Games**: 15 playable web games including board games, math games, creative games, and AI games
+- **Interactive Games**: 17 playable web games including board games, math games, creative games, retro games, and AI games
 - **Smooth Navigation**: Sticky navbar with smooth scrolling
 - **SEO Optimized**: Meta tags and Open Graph support
 - **Contact Integration**: Direct Telegram links and bot integration
@@ -38,6 +38,9 @@ saikatwtf.github.io/
 │   │   ├── pixel-painter.html
 │   │   ├── typing-test.html
 │   │   └── wordle.html
+│   ├── retro/
+│   │   ├── pixel-snake.html
+│   │   └── block-invaders.html
 │   └── ai/
 │       ├── rock-paper-scissors.html
 │       ├── trivia-quiz.html
@@ -66,10 +69,14 @@ saikatwtf.github.io/
 11. **Typing Speed Test** - Test your typing speed and accuracy
 12. **Wordle Clone** - Guess the 5-letter word in 6 tries
 
+### Retro Games
+13. **Pixel Snake** - Classic 8-bit snake game with retro graphics
+14. **Block Invaders** - Space Invaders style game with pixel graphics
+
 ### AI Games
-13. **Rock Paper Scissors AI** - Play against an AI that learns your patterns
-14. **Trivia Quiz** - Test your knowledge with API-powered questions
-15. **Mini AI Chatbot** - Chat with a rule-based AI assistant
+15. **Rock Paper Scissors AI** - Play against an AI that learns your patterns
+16. **Trivia Quiz** - Test your knowledge with API-powered questions
+17. **Mini AI Chatbot** - Chat with a rule-based AI assistant
 
 ## GitHub Pages Deployment
 
