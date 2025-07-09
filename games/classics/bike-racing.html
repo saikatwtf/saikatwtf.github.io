@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2D Bike Racing - Classic Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background: #111;
+        }
+        .game-container {
+            position: relative;
+        }
+        .controls {
+            position: absolute;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+        }
+        .control-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            user-select: none;
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold mb-4">2D Bike Racing</h1>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">Endless racing game - avoid obstacles and collect coins</p>
+            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+        </div>
+        
+        <div class="max-w-2xl mx-auto">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-lg font-semibold">Score: <span id="score">0</span></div>
+                    <div class="text-lg font-semibold">High Score: <span id="high-score">0</span></div>
+                </div>
+                
+                <div class="game-container mb-6">
+                    <canvas id="game-canvas" width="800" height="400" class="border-4 border-gray-800 dark:border-gray-600"></canvas>
+                    <div class="controls md:hidden">
+                        <div id="left-btn" class="control-btn">←</div>
+                        <div id="right-btn" class="control-btn">→</div>
+                    </div>
+                </div>
+                
+                <div id="game-over" class="hidden text-center mb-6">
+                    <div class="text-2xl font-bold text-red-600 dark:text-red-400">GAME OVER</div>
+                    <div class="text-lg mt-2">Final Score: <span id="final-score">0</span></div>
+                </div>
+                
+                <div class="flex justify-center gap-4">
+                    <button id="start-btn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700">Start Game</button>
+                    <button id="pause-btn" class="bg-yellow-600 text-white px-6 py-2 rounded hover:bg-yellow-700 hidden">Pause</button>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <div class="text-lg font-semibold mb-2">Controls</div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Use <span class="font-bold">Left</span> and <span class="font-bold">Right</span> arrow keys to move the bike.
+                        <br>On mobile, use the on-screen buttons.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game elements
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const highScoreElement = document.getElementById('high-score');
+        const finalScoreElement = document.getElementById('final-score');
+        const gameOverElement = document.getElementById('game-over');
+        const startBtn = document.getElementById('start-btn');
+        const pauseBtn = document.getElementById('pause-btn');
+        const leftBtn = document.getElementById('left-btn');
+        const rightBtn = document.getElementById('right-btn');
+        
+        // Game settings
+        const roadWidth = canvas.width * 0.8;
+        const roadX = (canvas.width - roadWidth) / 2;
+        const laneWidth = roadWidth / 3;
+        const bikeWidth = 40;
+        const bikeHeight = 70;
+        
+        // Game state
+        let bike = {
+            x: canvas.width / 2 - bikeWidth / 2,
+            y: canvas.height - bikeHeight - 20,
+            width: bikeWidth,
+            height: bikeHeight,
+            speed: 5,
+            isMovingLeft: false,
+            isMovingRight: false
+        };
+        
+        let obstacles = [];
+        let coins = [];
+        let score = 0;
+        let highScore = localStorage.getItem('bikeRacingHighScore') || 0;
+        let gameSpeed = 5;
+        let spawnRate = 0.02;
+        let coinSpawnRate = 0.01;
+        let gameLoop;
+        let animationId;
+        let isPaused = false;
+        let isGameOver = false;
+        let frameCount = 0;
+        
+        // Initialize game
+        function initGame() {
+            // Reset game state
+            bike = {
+                x: canvas.width / 2 - bikeWidth / 2,
+                y: canvas.height - bikeHeight - 20,
+                width: bikeWidth,
+                height: bikeHeight,
+                speed: 5,
+                isMovingLeft: false,
+                isMovingRight: false
+            };
+            
+            obstacles = [];
+            coins = [];
+            score = 0;
+            gameSpeed = 5;
+            spawnRate = 0.02;
+            coinSpawnRate = 0.01;
+            frameCount = 0;
+            
+            scoreElement.textContent = score;
+            highScoreElement.textContent = highScore;
+            
+            gameOverElement.classList.add('hidden');
+            pauseBtn.classList.remove('hidden');
+            isGameOver = false;
+            isPaused = false;
+            
+            // Start game loop
+            if (gameLoop) clearInterval(gameLoop);
+            startGameLoop();
+            
+            // Update button states
+            startBtn.textContent = 'Restart';
+        }
+        
+        // Start game loop
+        function startGameLoop() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            
+            function loop() {
+                if (!isPaused && !isGameOver) {
+                    updateGame();
+                    drawGame();
+                    animationId = requestAnimationFrame(loop);
+                }
+            }
+            
+            animationId = requestAnimationFrame(loop);
+        }
+        
+        // Update game state
+        function updateGame() {
+            frameCount++;
+            
+            // Move bike
+            if (bike.isMovingLeft && bike.x > roadX) {
+                bike.x -= bike.speed;
+            }
+            if (bike.isMovingRight && bike.x < roadX + roadWidth - bike.width) {
+                bike.x += bike.speed;
+            }
+            
+            // Spawn obstacles
+            if (Math.random() < spawnRate) {
+                const lane = Math.floor(Math.random() * 3);
+                const obstacleWidth = 50 + Math.random() * 30;
+                const obstacleHeight = 30 + Math.random() * 20;
+                
+                obstacles.push({
+                    x: roadX + lane * laneWidth + (laneWidth - obstacleWidth) / 2,
+                    y: -obstacleHeight,
+                    width: obstacleWidth,
+                    height: obstacleHeight,
+                    speed: gameSpeed + Math.random() * 2
+                });
+            }
+            
+            // Spawn coins
+            if (Math.random() < coinSpawnRate) {
+                const lane = Math.floor(Math.random() * 3);
+                const coinSize = 20;
+                
+                coins.push({
+                    x: roadX + lane * laneWidth + (laneWidth - coinSize) / 2,
+                    y: -coinSize,
+                    size: coinSize,
+                    speed: gameSpeed + Math.random() * 2
+                });
+            }
+            
+            // Move obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].y += obstacles[i].speed;
+                
+                // Remove obstacles that are off screen
+                if (obstacles[i].y > canvas.height) {
+                    obstacles.splice(i, 1);
+                    continue;
+                }
+                
+                // Check for collision with bike
+                if (checkCollision(bike, obstacles[i])) {
+                    gameOver();
+                    return;
+                }
+            }
+            
+            // Move coins
+            for (let i = coins.length - 1; i >= 0; i--) {
+                coins[i].y += coins[i].speed;
+                
+                // Remove coins that are off screen
+                if (coins[i].y > canvas.height) {
+                    coins.splice(i, 1);
+                    continue;
+                }
+                
+                // Check for collision with bike
+                if (checkCollision(bike, {
+                    x: coins[i].x,
+                    y: coins[i].y,
+                    width: coins[i].size,
+                    height: coins[i].size
+                })) {
+                    // Collect coin
+                    coins.splice(i, 1);
+                    score += 10;
+                    scoreElement.textContent = score;
+                    
+                    // Play coin sound
+                    playSound('coin');
+                }
+            }
+            
+            // Increase difficulty over time
+            if (frameCount % 500 === 0) {
+                gameSpeed += 0.5;
+                spawnRate += 0.002;
+                coinSpawnRate += 0.001;
+            }
+            
+            // Update score
+            if (frameCount % 10 === 0) {
+                score++;
+                scoreElement.textContent = score;
+            }
+        }
+        
+        // Draw game
+        function drawGame() {
+            // Clear canvas
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw road
+            ctx.fillStyle = '#333';
+            ctx.fillRect(roadX, 0, roadWidth, canvas.height);
+            
+            // Draw lane markings
+            ctx.strokeStyle = '#FFF';
+            ctx.setLineDash([20, 20]);
+            ctx.lineWidth = 5;
+            
+            // Left lane
+            ctx.beginPath();
+            ctx.moveTo(roadX + laneWidth, 0);
+            ctx.lineTo(roadX + laneWidth, canvas.height);
+            ctx.stroke();
+            
+            // Right lane
+            ctx.beginPath();
+            ctx.moveTo(roadX + laneWidth * 2, 0);
+            ctx.lineTo(roadX + laneWidth * 2, canvas.height);
+            ctx.stroke();
+            
+            ctx.setLineDash([]);
+            
+            // Draw obstacles
+            ctx.fillStyle = '#F00';
+            obstacles.forEach(obstacle => {
+                ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+            });
+            
+            // Draw coins
+            ctx.fillStyle = '#FFD700';
+            coins.forEach(coin => {
+                ctx.beginPath();
+                ctx.arc(coin.x + coin.size / 2, coin.y + coin.size / 2, coin.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw $ symbol
+                ctx.fillStyle = '#000';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('$', coin.x + coin.size / 2, coin.y + coin.size / 2);
+                ctx.fillStyle = '#FFD700';
+            });
+            
+            // Draw bike
+            ctx.fillStyle = '#00F';
+            ctx.fillRect(bike.x, bike.y, bike.width, bike.height);
+            
+            // Draw bike details
+            ctx.fillStyle = '#000';
+            // Wheels
+            ctx.beginPath();
+            ctx.arc(bike.x + 10, bike.y + bike.height - 10, 10, 0, Math.PI * 2);
+            ctx.arc(bike.x + bike.width - 10, bike.y + bike.height - 10, 10, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Windshield
+            ctx.fillStyle = '#99F';
+            ctx.beginPath();
+            ctx.moveTo(bike.x + 5, bike.y + 20);
+            ctx.lineTo(bike.x + bike.width - 5, bike.y + 20);
+            ctx.lineTo(bike.x + bike.width - 10, bike.y + 5);
+            ctx.lineTo(bike.x + 10, bike.y + 5);
+            ctx.closePath();
+            ctx.fill();
+        }
+        
+        // Check collision between two objects
+        function checkCollision(obj1, obj2) {
+            return obj1.x < obj2.x + obj2.width &&
+                   obj1.x + obj1.width > obj2.x &&
+                   obj1.y < obj2.y + obj2.height &&
+                   obj1.y + obj1.height > obj2.y;
+        }
+        
+        // Game over
+        function gameOver() {
+            cancelAnimationFrame(animationId);
+            isGameOver = true;
+            
+            // Update high score
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('bikeRacingHighScore', highScore);
+                highScoreElement.textContent = highScore;
+            }
+            
+            finalScoreElement.textContent = score;
+            gameOverElement.classList.remove('hidden');
+            pauseBtn.classList.add('hidden');
+            
+            // Play game over sound
+            playSound('gameOver');
+        }
+        
+        // Toggle pause
+        function togglePause() {
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? 'Resume' : 'Pause';
+            
+            if (!isPaused) {
+                startGameLoop();
+            }
+        }
+        
+        // Play sound
+        function playSound(type) {
+            // Simple beep sounds using Web Audio API
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            switch (type) {
+                case 'coin':
+                    oscillator.type = 'sine';
+                    oscillator.frequency.value = 880;
+                    gainNode.gain.value = 0.1;
+                    oscillator.start();
+                    setTimeout(() => oscillator.stop(), 100);
+                    break;
+                case 'gameOver':
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.value = 220;
+                    gainNode.gain.value = 0.1;
+                    oscillator.start();
+                    oscillator.frequency.exponentialRampToValueAtTime(55, audioContext.currentTime + 0.5);
+                    setTimeout(() => oscillator.stop(), 500);
+                    break;
+            }
+        }
+        
+        // Event listeners
+        document.addEventListener('keydown', (e) => {
+            if (isGameOver) return;
+            
+            switch (e.key) {
+                case 'ArrowLeft':
+                    bike.isMovingLeft = true;
+                    break;
+                case 'ArrowRight':
+                    bike.isMovingRight = true;
+                    break;
+                case ' ':
+                    if (isGameOver) {
+                        initGame();
+                    } else {
+                        togglePause();
+                    }
+                    break;
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            switch (e.key) {
+                case 'ArrowLeft':
+                    bike.isMovingLeft = false;
+                    break;
+                case 'ArrowRight':
+                    bike.isMovingRight = false;
+                    break;
+            }
+        });
+        
+        // Touch controls
+        leftBtn.addEventListener('touchstart', () => { bike.isMovingLeft = true; });
+        leftBtn.addEventListener('touchend', () => { bike.isMovingLeft = false; });
+        leftBtn.addEventListener('mousedown', () => { bike.isMovingLeft = true; });
+        leftBtn.addEventListener('mouseup', () => { bike.isMovingLeft = false; });
+        leftBtn.addEventListener('mouseleave', () => { bike.isMovingLeft = false; });
+        
+        rightBtn.addEventListener('touchstart', () => { bike.isMovingRight = true; });
+        rightBtn.addEventListener('touchend', () => { bike.isMovingRight = false; });
+        rightBtn.addEventListener('mousedown', () => { bike.isMovingRight = true; });
+        rightBtn.addEventListener('mouseup', () => { bike.isMovingRight = false; });
+        rightBtn.addEventListener('mouseleave', () => { bike.isMovingRight = false; });
+        
+        // Button controls
+        startBtn.addEventListener('click', initGame);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Initial draw
+        drawGame();
+        highScoreElement.textContent = highScore;
+        
+        // Resize canvas on window resize
+        window.addEventListener('resize', () => {
+            // Maintain aspect ratio
+            const container = canvas.parentElement;
+            const containerWidth = container.clientWidth - 32; // Accounting for padding
+            
+            if (containerWidth < 800) {
+                const aspectRatio = canvas.height / canvas.width;
+                canvas.style.width = containerWidth + 'px';
+                canvas.style.height = (containerWidth * aspectRatio) + 'px';
+            } else {
+                canvas.style.width = '';
+                canvas.style.height = '';
+            }
+        });
+        
+        // Initial resize
+        window.dispatchEvent(new Event('resize'));
+    </script>
+</body>
+</html>

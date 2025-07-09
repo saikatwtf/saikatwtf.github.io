@@ -9,7 +9,7 @@ A modern, responsive portfolio website showcasing projects, games, and contact i
 - **Responsive Design**: Mobile-first approach with Tailwind CSS
 - **Dark/Light Mode**: Toggle between themes with localStorage persistence
 - **GitHub Integration**: Dynamically fetches and displays public repositories
-- **Interactive Games**: 17 playable web games including board games, math games, creative games, retro games, and AI games
+- **Interactive Games**: 19 playable web games including board games, math games, creative games, classic games, retro games, and AI games
 - **Smooth Navigation**: Sticky navbar with smooth scrolling
 - **SEO Optimized**: Meta tags and Open Graph support
 - **Contact Integration**: Direct Telegram links and bot integration
@@ -29,7 +29,7 @@ saikatwtf.github.io/
 │   ├── ludo.html
 │   ├── snake-ladder.html
 │   ├── sudoku.html
-│   ├── flappy-bird.html
+│   
 │   ├── math/
 │   │   ├── 24-game.html
 │   │   ├── arithmetic-memory.html
@@ -38,7 +38,10 @@ saikatwtf.github.io/
 │   │   ├── pixel-painter.html
 │   │   ├── typing-test.html
 │   │   └── wordle.html
-│   ├── retro/
+│   ├── classics/
+│   ├── flappy-bird.html
+│   └── bike-racing.html
+├── retro/
 │   │   ├── pixel-snake.html
 │   │   └── block-invaders.html
 │   └── ai/
@@ -57,7 +60,6 @@ saikatwtf.github.io/
 3. **Ludo** - Simplified Ludo with dice rolling mechanics
 4. **Snake & Ladder** - Traditional board game with snakes and ladders
 5. **Sudoku** - Number puzzle with validation and hints
-6. **Flappy Bird** - Arcade-style game with pipe navigation
 
 ### Math Games
 7. **24 Game** - Use four numbers and operations to make 24
@@ -69,14 +71,18 @@ saikatwtf.github.io/
 11. **Typing Speed Test** - Test your typing speed and accuracy
 12. **Wordle Clone** - Guess the 5-letter word in 6 tries
 
+### Classic Games
+13. **Flappy Bird** - Arcade-style game with pipe navigation
+14. **Bike Racing** - Endless 2D racing game with obstacles
+
 ### Retro Games
-13. **Pixel Snake** - Classic 8-bit snake game with retro graphics
-14. **Block Invaders** - Space Invaders style game with pixel graphics
+15. **Pixel Snake** - Classic 8-bit snake game with retro graphics
+16. **Block Invaders** - Space Invaders style game with pixel graphics
 
 ### AI Games
-15. **Rock Paper Scissors AI** - Play against an AI that learns your patterns
-16. **Trivia Quiz** - Test your knowledge with API-powered questions
-17. **Mini AI Chatbot** - Chat with a rule-based AI assistant
+17. **Rock Paper Scissors AI** - Play against an AI that learns your patterns
+18. **Trivia Quiz** - Test your knowledge with API-powered questions
+19. **Mini AI Chatbot** - Chat with a rule-based AI assistant
 
 ## GitHub Pages Deployment
 
