@@ -2,64 +2,131 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mini AI Chatbot - AI Games</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        /* Custom styles for better mobile experience */
+        .chat-container {
+            scrollbar-width: thin;
+            scrollbar-color: #3b82f6 #e5e7eb;
+        }
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-container::-webkit-scrollbar-track {
+            background: #e5e7eb;
+            border-radius: 3px;
+        }
+        .chat-container::-webkit-scrollbar-thumb {
+            background-color: #3b82f6;
+            border-radius: 3px;
+        }
+        .typing-indicator {
+            display: inline-block;
+        }
+        .typing-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #6b7280;
+            margin-right: 4px;
+            animation: typingAnimation 1.4s infinite ease-in-out;
+        }
+        .typing-dot:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+            margin-right: 0;
+        }
+        @keyframes typingAnimation {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        .suggestion-btn {
+            transition: all 0.2s;
+        }
+        .suggestion-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4">Mini AI Chatbot</h1>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Chat with a rule-based AI assistant</p>
-            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen select-none">
+    <div class="container mx-auto px-4 py-4">
+        <div class="text-center mb-4">
+            <h1 class="text-2xl md:text-3xl font-bold mb-2">Mini AI Chatbot</h1>
+            <p class="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-2">Chat with a rule-based AI assistant</p>
+            <a href="../../index.html" class="text-sm md:text-base text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
         </div>
         
         <div class="max-w-3xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div class="flex items-center mb-6">
-                    <div class="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-2xl mr-4">
+            <div class="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg">
+                <!-- Chat header with bot info -->
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl md:text-2xl mr-3">
                         🤖
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold">SaikatBot</h2>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">A rule-based AI assistant</p>
+                        <h2 class="text-lg md:text-xl font-bold">SaikatBot</h2>
+                        <p class="text-xs md:text-sm text-gray-600 dark:text-gray-400">Rule-based AI assistant</p>
+                    </div>
+                    <div class="ml-auto flex items-center">
+                        <span id="connection-status" class="flex items-center text-xs md:text-sm">
+                            <span class="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                            Online
+                        </span>
                     </div>
                 </div>
                 
-                <div id="chat-container" class="h-96 overflow-y-auto mb-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                    <div class="flex mb-4">
+                <!-- Chat container -->
+                <div id="chat-container" class="chat-container h-64 md:h-96 overflow-y-auto mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                    <div class="flex mb-3">
                         <div class="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-2">
                             🤖
                         </div>
-                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[80%]">
+                        <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[85%]">
                             <p>Hello! I'm SaikatBot, your friendly AI assistant. How can I help you today?</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="flex">
-                    <input id="user-input" type="text" placeholder="Type your message..." class="flex-grow p-3 border border-gray-300 dark:border-gray-600 rounded-l bg-white dark:bg-gray-700">
-                    <button id="send-button" class="bg-blue-600 text-white px-6 py-3 rounded-r hover:bg-blue-700">Send</button>
+                <!-- Input area -->
+                <div class="flex mb-4">
+                    <input id="user-input" type="text" placeholder="Type your message..." 
+                           class="flex-grow p-2 md:p-3 border border-gray-300 dark:border-gray-600 rounded-l-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="send-button" class="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-r-lg transition-colors">
+                        <span class="hidden md:inline">Send</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:hidden" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
                 </div>
                 
-                <div class="mt-6">
-                    <h3 class="font-bold mb-2">Try asking about:</h3>
+                <!-- Quick suggestions -->
+                <div class="mb-4">
+                    <h3 class="font-bold mb-2 text-sm md:text-base">Try asking:</h3>
                     <div class="grid grid-cols-2 gap-2">
-                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Who are you?</button>
-                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Tell me a joke</button>
-                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">What's the weather?</button>
-                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Tell me about yourself</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Who are you?</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Tell me a joke</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600">What's the weather?</button>
+                        <button class="suggestion-btn bg-gray-200 dark:bg-gray-700 p-2 rounded text-xs md:text-sm hover:bg-gray-300 dark:hover:bg-gray-600">Help me</button>
                     </div>
                 </div>
                 
-                <div class="mt-6 text-sm text-gray-600 dark:text-gray-400">
-                    <p class="font-semibold">Bot Intelligence:</p>
+                <!-- Bot info -->
+                <div class="text-xs md:text-sm text-gray-600 dark:text-gray-400">
+                    <p class="font-semibold mb-1">Bot capabilities:</p>
                     <ul class="list-disc pl-5 space-y-1">
-                        <li>Pattern matching for common questions</li>
-                        <li>Context awareness for follow-up questions</li>
-                        <li>Sentiment analysis for emotional responses</li>
-                        <li>Knowledge base for factual information</li>
+                        <li>Understands common questions and phrases</li>
+                        <li>Remembers context during conversation</li>
+                        <li>Provides jokes and simple information</li>
+                        <li>Works offline - no internet required</li>
                     </ul>
                 </div>
             </div>
@@ -72,6 +139,7 @@
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
         const suggestionButtons = document.querySelectorAll('.suggestion-btn');
+        const connectionStatus = document.getElementById('connection-status');
         
         // Chat state
         let chatHistory = [];
@@ -79,7 +147,8 @@
             topic: null,
             lastQuestion: null,
             userName: null,
-            mood: 'neutral' // neutral, happy, sad
+            mood: 'neutral', // neutral, happy, sad
+            isTyping: false
         };
         
         // Knowledge base
@@ -88,23 +157,33 @@
                 name: 'SaikatBot',
                 creator: 'Saikat',
                 purpose: 'to demonstrate rule-based AI chatbot capabilities',
-                abilities: ['answering questions', 'telling jokes', 'providing information', 'having simple conversations']
+                abilities: ['answering questions', 'telling jokes', 'providing information', 'having simple conversations'],
+                version: '2.1'
             },
             jokes: [
                 "Why don't scientists trust atoms? Because they make up everything!",
                 "Why did the JavaScript developer wear glasses? Because he couldn't C#!",
                 "How many programmers does it take to change a light bulb? None, that's a hardware problem!",
                 "Why do programmers prefer dark mode? Because light attracts bugs!",
-                "What's a computer's favorite snack? Microchips!"
+                "What's a computer's favorite snack? Microchips!",
+                "Why was the computer cold? It left its Windows open!",
+                "How do you comfort a JavaScript bug? You console it!"
             ],
             greetings: ['Hello', 'Hi', 'Hey there', 'Greetings', 'Welcome'],
-            farewells: ['Goodbye', 'Bye', 'See you later', 'Take care', 'Until next time']
+            farewells: ['Goodbye', 'Bye', 'See you later', 'Take care', 'Until next time'],
+            compliments: [
+                "You're asking great questions!",
+                "I'm impressed by your curiosity!",
+                "You have a wonderful way with words!",
+                "I enjoy our conversations!",
+                "You're making this chatbot very happy!"
+            ]
         };
         
         // Pattern matching rules
         const rules = [
             {
-                patterns: ['hello', 'hi', 'hey', 'greetings'],
+                patterns: ['hello', 'hi', 'hey', 'greetings', 'hola', 'namaste'],
                 responses: () => {
                     const greeting = knowledgeBase.greetings[Math.floor(Math.random() * knowledgeBase.greetings.length)];
                     return context.userName ? 
@@ -117,7 +196,7 @@
                 }
             },
             {
-                patterns: ['bye', 'goodbye', 'see you', 'later'],
+                patterns: ['bye', 'goodbye', 'see you', 'later', 'farewell'],
                 responses: () => {
                     const farewell = knowledgeBase.farewells[Math.floor(Math.random() * knowledgeBase.farewells.length)];
                     return context.userName ? 
@@ -129,16 +208,16 @@
                 }
             },
             {
-                patterns: ['who are you', 'your name', 'about you', 'tell me about yourself'],
+                patterns: ['who are you', 'your name', 'about you', 'tell me about yourself', 'what are you'],
                 responses: () => {
-                    return `I'm ${knowledgeBase.bot.name}, a rule-based AI chatbot created by ${knowledgeBase.bot.creator}. I'm here ${knowledgeBase.bot.purpose}. I can help with ${knowledgeBase.bot.abilities.join(', ')}.`;
+                    return `I'm ${knowledgeBase.bot.name} v${knowledgeBase.bot.version}, a rule-based AI chatbot created by ${knowledgeBase.bot.creator}. I'm here ${knowledgeBase.bot.purpose}. I can help with ${knowledgeBase.bot.abilities.join(', ')}.`;
                 },
                 updateContext: () => {
                     context.topic = 'bot_identity';
                 }
             },
             {
-                patterns: ['joke', 'funny', 'make me laugh'],
+                patterns: ['joke', 'funny', 'make me laugh', 'humor', 'another joke'],
                 responses: () => {
                     return knowledgeBase.jokes[Math.floor(Math.random() * knowledgeBase.jokes.length)];
                 },
@@ -148,27 +227,40 @@
                 }
             },
             {
-                patterns: ['weather', 'temperature', 'forecast'],
+                patterns: ['weather', 'temperature', 'forecast', 'raining', 'sunny'],
                 responses: () => {
-                    return "I don't have access to real-time weather data, but I can pretend! Let's say it's sunny with a chance of JavaScript errors. ☀️";
+                    const weatherTypes = [
+                        "sunny with a chance of JavaScript errors ☀️",
+                        "cloudy with a possibility of recursion 🌥️",
+                        "rainy with scattered bugs 🌧️",
+                        "stormy with potential server outages ⛈️",
+                        "clear with perfect API conditions 🌤️"
+                    ];
+                    return `I don't have real-time weather data, but let's pretend it's ${weatherTypes[Math.floor(Math.random() * weatherTypes.length)]}.`;
                 },
                 updateContext: () => {
                     context.topic = 'weather';
                 }
             },
             {
-                patterns: ['thank', 'thanks', 'appreciate'],
+                patterns: ['thank', 'thanks', 'appreciate', 'grateful'],
                 responses: () => {
-                    return context.mood === 'happy' ? 
+                    const response = context.mood === 'happy' ? 
                         "You're very welcome! It's my pleasure to help!" : 
                         "You're welcome! Let me know if you need anything else.";
+                    
+                    // Occasionally add a compliment
+                    if (Math.random() > 0.7) {
+                        return `${response} ${knowledgeBase.compliments[Math.floor(Math.random() * knowledgeBase.compliments.length)]}`;
+                    }
+                    return response;
                 },
                 updateContext: () => {
                     context.mood = 'happy';
                 }
             },
             {
-                patterns: ['sorry', 'apologize', 'my bad'],
+                patterns: ['sorry', 'apologize', 'my bad', 'oops', 'forgive'],
                 responses: () => {
                     return "No worries at all! I'm just a bot, so I don't have feelings to hurt.";
                 },
@@ -177,7 +269,7 @@
                 }
             },
             {
-                patterns: ['my name is', 'i am', 'call me'],
+                patterns: ['my name is', 'i am', 'call me', 'i\'m'],
                 responses: (message) => {
                     // Extract name
                     let name = '';
@@ -187,6 +279,8 @@
                         name = message.split('i am')[1].trim();
                     } else if (message.includes('call me')) {
                         name = message.split('call me')[1].trim();
+                    } else if (message.includes('i\'m')) {
+                        name = message.split('i\'m')[1].trim();
                     }
                     
                     // Remove punctuation and get first word
@@ -201,7 +295,7 @@
                 }
             },
             {
-                patterns: ['how are you', 'how do you feel', 'are you ok'],
+                patterns: ['how are you', 'how do you feel', 'are you ok', 'you good'],
                 responses: () => {
                     return "I'm just a program, so I don't have feelings, but thanks for asking! I'm functioning perfectly and ready to assist you.";
                 },
@@ -210,12 +304,31 @@
                 }
             },
             {
-                patterns: ['help', 'what can you do', 'capabilities'],
+                patterns: ['help', 'what can you do', 'capabilities', 'assistance', 'support'],
                 responses: () => {
-                    return `I can help with ${knowledgeBase.bot.abilities.join(', ')}. Just ask me a question or try one of the suggested topics!`;
+                    return `I can help with ${knowledgeBase.bot.abilities.join(', ')}. Try asking me about myself, for a joke, or about the weather. You can also use the quick suggestion buttons!`;
                 },
                 updateContext: () => {
                     context.topic = 'help';
+                }
+            },
+            {
+                patterns: ['time', 'date', 'day today', 'current time'],
+                responses: () => {
+                    const now = new Date();
+                    return `The current time is ${now.toLocaleTimeString()} on ${now.toLocaleDateString()}.`;
+                },
+                updateContext: () => {
+                    context.topic = 'time';
+                }
+            },
+            {
+                patterns: ['version', 'update', 'latest'],
+                responses: () => {
+                    return `I'm currently running version ${knowledgeBase.bot.version}. This is a rule-based chatbot that doesn't receive automatic updates.`;
+                },
+                updateContext: () => {
+                    context.topic = 'version';
                 }
             }
         ];
@@ -223,14 +336,58 @@
         // Handle follow-up questions based on context
         const followUpRules = {
             'bot_identity': {
-                patterns: ['who created you', 'your creator', 'made you'],
+                patterns: ['who created you', 'your creator', 'made you', 'developer'],
                 responses: () => `I was created by ${knowledgeBase.bot.creator} as a demonstration of rule-based AI chatbots.`
             },
             'jokes': {
-                patterns: ['another', 'one more', 'tell me more'],
+                patterns: ['another', 'one more', 'tell me more', 'more jokes'],
                 responses: () => knowledgeBase.jokes[Math.floor(Math.random() * knowledgeBase.jokes.length)]
+            },
+            'weather': {
+                patterns: ['tomorrow', 'next week', 'weekend'],
+                responses: () => "My weather predictions are purely fictional! Let's say it will be perfect for whatever you have planned."
             }
         };
+        
+        // Show typing indicator
+        function showTypingIndicator() {
+            if (context.isTyping) return;
+            
+            context.isTyping = true;
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'flex mb-3';
+            typingDiv.id = 'typing-indicator';
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm mr-2';
+            avatar.textContent = '🤖';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[85%]';
+            
+            const indicator = document.createElement('div');
+            indicator.className = 'typing-indicator';
+            indicator.innerHTML = `
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            `;
+            
+            bubble.appendChild(indicator);
+            typingDiv.appendChild(avatar);
+            typingDiv.appendChild(bubble);
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        // Hide typing indicator
+        function hideTypingIndicator() {
+            context.isTyping = false;
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
         
         // Process user message
         function processMessage(message) {
@@ -259,13 +416,19 @@
             }
             
             // Fallback response
-            return "I'm not sure how to respond to that. I'm a simple rule-based bot with limited capabilities. Try asking me about myself, for a joke, or use one of the suggested topics.";
+            const fallbacks = [
+                "I'm not sure how to respond to that. Try asking me something else!",
+                "I don't quite understand. Could you rephrase that?",
+                "My programming doesn't cover that topic yet. Try something else!",
+                "I'm still learning! Maybe ask me something different?"
+            ];
+            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
         }
         
         // Add message to chat
         function addMessage(sender, message, isUser = false) {
             const messageDiv = document.createElement('div');
-            messageDiv.className = 'flex mb-4' + (isUser ? ' justify-end' : '');
+            messageDiv.className = `flex mb-3 ${isUser ? 'justify-end' : ''}`;
             
             const avatar = document.createElement('div');
             avatar.className = isUser ? 
@@ -275,8 +438,8 @@
             
             const bubble = document.createElement('div');
             bubble.className = isUser ? 
-                'bg-green-100 dark:bg-green-900 p-3 rounded-lg max-w-[80%]' :
-                'bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[80%]';
+                'bg-green-100 dark:bg-green-900 p-3 rounded-lg max-w-[85%]' :
+                'bg-blue-100 dark:bg-blue-900 p-3 rounded-lg max-w-[85%]';
             
             const text = document.createElement('p');
             text.textContent = message;
@@ -302,8 +465,22 @@
             });
         }
         
+        // Simulate bot typing and response
+        async function sendBotResponse(message) {
+            showTypingIndicator();
+            
+            // Random delay to simulate thinking (between 0.5 and 2 seconds)
+            const delay = 500 + Math.random() * 1500;
+            
+            await new Promise(resolve => setTimeout(resolve, delay));
+            
+            hideTypingIndicator();
+            const response = processMessage(message);
+            addMessage('Bot', response);
+        }
+        
         // Handle user input
-        function handleUserInput() {
+        async function handleUserInput() {
             const message = userInput.value.trim();
             if (!message) return;
             
@@ -314,10 +491,7 @@
             userInput.value = '';
             
             // Process message and get response
-            setTimeout(() => {
-                const response = processMessage(message);
-                addMessage('Bot', response);
-            }, 500);
+            await sendBotResponse(message);
         }
         
         // Event listeners
@@ -332,6 +506,22 @@
                 handleUserInput();
             });
         });
+        
+        // Focus input on page load
+        window.addEventListener('load', () => {
+            userInput.focus();
+        });
+        
+        // Simulate connection status
+        setInterval(() => {
+            const status = navigator.onLine ? 'Online' : 'Offline';
+            const color = navigator.onLine ? 'bg-green-500' : 'bg-red-500';
+            
+            connectionStatus.innerHTML = `
+                <span class="w-2 h-2 rounded-full ${color} mr-1"></span>
+                ${status}
+            `;
+        }, 5000);
     </script>
 </body>
 </html>
