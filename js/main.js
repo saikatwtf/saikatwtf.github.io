@@ -11,7 +11,7 @@ function getPreferredTheme() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-// Apply theme
+// Apply theme dark
 function applyTheme(theme) {
     html.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
