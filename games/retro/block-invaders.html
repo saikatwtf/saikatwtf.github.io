@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Block Invaders - Retro Games</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: 'class' }</script>
@@ -10,55 +10,78 @@
         canvas {
             image-rendering: pixelated;
             image-rendering: crisp-edges;
+            touch-action: none;
         }
         .pixel-font {
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
         }
+        .control-btn {
+            transition: all 0.1s;
+            user-select: none;
+        }
+        .control-btn:active {
+            transform: scale(0.95);
+            background-color: #4B5563 !important;
+        }
+        @media (max-width: 640px) {
+            .game-container {
+                padding: 0.5rem;
+            }
+            .controls-container {
+                margin-top: 1rem;
+            }
+        }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4 pixel-font">BLOCK INVADERS</h1>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Classic Space Invaders style game</p>
-            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen select-none">
+    <div class="container mx-auto px-4 py-4 game-container">
+        <div class="text-center mb-4">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2 pixel-font">BLOCK INVADERS</h1>
+            <p class="text-sm md:text-base text-gray-600 dark:text-gray-300 mb-2">Classic Space Invaders with auto-fire!</p>
+            <a href="../../index.html" class="text-sm md:text-base text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
         </div>
         
         <div class="max-w-2xl mx-auto">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-lg font-semibold pixel-font">SCORE: <span id="score">0</span></div>
-                    <div class="text-lg font-semibold pixel-font">LIVES: <span id="lives">3</span></div>
-                    <div class="text-lg font-semibold pixel-font">LEVEL: <span id="level">1</span></div>
+            <div class="bg-white dark:bg-gray-800 p-4 md:p-6 rounded-lg shadow-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="text-base md:text-lg font-semibold pixel-font">SCORE: <span id="score">0</span></div>
+                    <div class="text-base md:text-lg font-semibold pixel-font">LIVES: <span id="lives">3</span></div>
+                    <div class="text-base md:text-lg font-semibold pixel-font">LEVEL: <span id="level">1</span></div>
                 </div>
                 
-                <div class="flex justify-center mb-6">
-                    <canvas id="game-canvas" width="480" height="640" class="border-4 border-gray-800 dark:border-gray-600 bg-black"></canvas>
+                <div class="flex justify-center mb-4">
+                    <canvas id="game-canvas" width="300" height="400" class="border-4 border-gray-800 dark:border-gray-600 bg-black"></canvas>
                 </div>
                 
-                <div id="game-over" class="hidden text-center mb-6">
-                    <div class="text-2xl font-bold text-red-600 dark:text-red-400 pixel-font">GAME OVER</div>
+                <div id="game-over" class="hidden text-center mb-4">
+                    <div class="text-xl md:text-2xl font-bold text-red-600 dark:text-red-400 pixel-font">GAME OVER</div>
                     <div class="text-lg mt-2 pixel-font">FINAL SCORE: <span id="final-score">0</span></div>
+                    <button id="restart-btn" class="mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 pixel-font">PLAY AGAIN</button>
                 </div>
                 
-                <div class="flex justify-center gap-4">
-                    <button id="start-btn" class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 pixel-font">START</button>
-                    <button id="pause-btn" class="bg-yellow-600 text-white px-6 py-2 rounded hover:bg-yellow-700 pixel-font">PAUSE</button>
+                <div id="level-complete" class="hidden text-center mb-4">
+                    <div class="text-xl md:text-2xl font-bold text-green-600 dark:text-green-400 pixel-font">LEVEL <span id="level-number">1</span> COMPLETE!</div>
+                    <div class="text-lg mt-2 pixel-font">SCORE: <span id="level-score">0</span></div>
                 </div>
                 
-                <div class="mt-6 text-center">
-                    <div class="text-lg font-semibold mb-2 pixel-font">CONTROLS</div>
+                <div class="flex justify-center gap-3 mb-4">
+                    <button id="start-btn" class="bg-green-600 text-white px-4 md:px-6 py-2 rounded hover:bg-green-700 pixel-font text-sm md:text-base">START</button>
+                    <button id="pause-btn" class="bg-yellow-600 text-white px-4 md:px-6 py-2 rounded hover:bg-yellow-700 pixel-font text-sm md:text-base">PAUSE</button>
+                </div>
+                
+                <div class="mt-4 text-center controls-container">
+                    <div class="text-base md:text-lg font-semibold mb-2 pixel-font">CONTROLS</div>
                     <div class="grid grid-cols-3 gap-2 max-w-xs mx-auto">
                         <div></div>
-                        <button id="shoot-btn" class="bg-red-500 dark:bg-red-700 p-2 rounded">SHOOT</button>
+                        <div class="p-3 text-sm text-gray-600 dark:text-gray-400">AUTO-SHOOT</div>
                         <div></div>
-                        <button id="left-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded">←</button>
+                        <button id="left-btn" class="bg-gray-200 dark:bg-gray-700 p-3 rounded control-btn">←</button>
                         <div></div>
-                        <button id="right-btn" class="bg-gray-200 dark:bg-gray-700 p-2 rounded">→</button>
+                        <button id="right-btn" class="bg-gray-200 dark:bg-gray-700 p-3 rounded control-btn">→</button>
                     </div>
-                    <div class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        Use arrow keys to move, spacebar to shoot
+                    <div class="text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        Use arrow keys or swipe to move (shoots automatically)
                     </div>
                 </div>
             </div>
@@ -73,33 +96,40 @@
         const livesElement = document.getElementById('lives');
         const levelElement = document.getElementById('level');
         const finalScoreElement = document.getElementById('final-score');
+        const levelScoreElement = document.getElementById('level-score');
+        const levelNumberElement = document.getElementById('level-number');
         const gameOverElement = document.getElementById('game-over');
+        const levelCompleteElement = document.getElementById('level-complete');
         const startBtn = document.getElementById('start-btn');
         const pauseBtn = document.getElementById('pause-btn');
+        const restartBtn = document.getElementById('restart-btn');
         const leftBtn = document.getElementById('left-btn');
         const rightBtn = document.getElementById('right-btn');
-        const shootBtn = document.getElementById('shoot-btn');
         
         // Game settings
         const colors = {
-            player: '#00FF00',
-            invader: '#FF00FF',
-            bullet: '#FFFFFF',
-            playerBullet: '#00FFFF',
-            explosion: '#FF0000',
-            shield: '#0000FF',
-            text: '#FFFFFF'
+            player: '#4ade80', // green-400
+            invader1: '#f472b6', // pink-400
+            invader2: '#a78bfa', // purple-400
+            invader3: '#60a5fa', // blue-400
+            bullet: '#ffffff',
+            playerBullet: '#22d3ee', // cyan-400
+            explosion: '#f87171', // red-400
+            shield: '#34d399', // emerald-400
+            text: '#ffffff'
         };
         
         // Game state
         let player = {
-            x: canvas.width / 2 - 25,
-            y: canvas.height - 60,
-            width: 50,
-            height: 20,
+            x: 0,
+            y: 0,
+            width: 30,
+            height: 15,
             speed: 5,
             isMovingLeft: false,
-            isMovingRight: false
+            isMovingRight: false,
+            lastShot: 0,
+            shootInterval: 500 // ms between shots
         };
         
         let bullets = [];
@@ -112,44 +142,65 @@
         let lives = 3;
         let level = 1;
         let gameSpeed = 16; // milliseconds (60 FPS)
-        let invaderSpeed = 1;
+        let invaderSpeed = 0.5;
         let invaderDirection = 1; // 1 = right, -1 = left
-        let invaderDropSpeed = 20;
-        let invaderShootChance = 0.005;
+        let invaderDropSpeed = 15;
+        let invaderShootChance = 0.003;
         let gameLoop;
         let isPaused = false;
         let isGameOver = false;
+        let touchStartX = 0;
+        
+        // Level configurations
+        const levelConfigs = [
+            { rows: 3, cols: 6, speed: 0.5, shootChance: 0.003 }, // Level 1
+            { rows: 3, cols: 7, speed: 0.6, shootChance: 0.004 }, // Level 2
+            { rows: 4, cols: 7, speed: 0.7, shootChance: 0.005 }, // Level 3
+            { rows: 4, cols: 8, speed: 0.8, shootChance: 0.006 }, // Level 4
+            { rows: 5, cols: 8, speed: 0.9, shootChance: 0.007 }, // Level 5
+            { rows: 5, cols: 9, speed: 1.0, shootChance: 0.008 }, // Level 6
+            { rows: 5, cols: 10, speed: 1.1, shootChance: 0.009 }, // Level 7
+            { rows: 6, cols: 10, speed: 1.2, shootChance: 0.010 }, // Level 8
+            { rows: 6, cols: 11, speed: 1.3, shootChance: 0.011 }, // Level 9
+            { rows: 6, cols: 12, speed: 1.4, shootChance: 0.012 }  // Level 10
+        ];
         
         // Initialize game
         function initGame() {
             // Reset game state
             player = {
-                x: canvas.width / 2 - 25,
-                y: canvas.height - 60,
-                width: 50,
-                height: 20,
+                x: canvas.width / 2 - 15,
+                y: canvas.height - 40,
+                width: 30,
+                height: 15,
                 speed: 5,
                 isMovingLeft: false,
-                isMovingRight: false
+                isMovingRight: false,
+                lastShot: 0,
+                shootInterval: 500
             };
             
             bullets = [];
             invaderBullets = [];
             invaders = [];
             explosions = [];
+            shields = [];
             
             score = 0;
             lives = 3;
             level = 1;
-            invaderSpeed = 1;
-            invaderDirection = 1;
-            invaderShootChance = 0.005;
+            
+            // Set difficulty based on level
+            const config = levelConfigs[level-1];
+            invaderSpeed = config.speed;
+            invaderShootChance = config.shootChance;
             
             scoreElement.textContent = score;
             livesElement.textContent = lives;
             levelElement.textContent = level;
             
             gameOverElement.classList.add('hidden');
+            levelCompleteElement.classList.add('hidden');
             isGameOver = false;
             isPaused = false;
             
@@ -166,22 +217,30 @@
             // Update button states
             startBtn.textContent = 'RESTART';
             pauseBtn.textContent = 'PAUSE';
+            
+            // Draw initial state
+            drawGame();
         }
         
-        // Create invaders
+        // Create invaders based on current level
         function createInvaders() {
             invaders = [];
-            const rows = 5;
-            const cols = 10;
-            const invaderWidth = 30;
-            const invaderHeight = 20;
+            const config = levelConfigs[level-1];
+            const rows = config.rows;
+            const cols = config.cols;
+            const invaderWidth = 25;
+            const invaderHeight = 15;
             const padding = 10;
+            
+            // Center the invaders
+            const totalWidth = cols * (invaderWidth + padding) - padding;
+            const startX = (canvas.width - totalWidth) / 2;
             
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
                     invaders.push({
-                        x: col * (invaderWidth + padding) + 50,
-                        y: row * (invaderHeight + padding) + 50,
+                        x: startX + col * (invaderWidth + padding),
+                        y: 30 + row * (invaderHeight + padding),
                         width: invaderWidth,
                         height: invaderHeight,
                         type: row % 3, // Different types for different rows
@@ -194,21 +253,21 @@
         // Create shields
         function createShields() {
             shields = [];
-            const shieldCount = 4;
-            const shieldWidth = 60;
-            const shieldHeight = 40;
+            const shieldCount = 3;
+            const shieldWidth = 50;
+            const shieldHeight = 30;
             const spacing = (canvas.width - (shieldCount * shieldWidth)) / (shieldCount + 1);
             
             for (let i = 0; i < shieldCount; i++) {
                 const x = spacing + i * (shieldWidth + spacing);
-                const y = canvas.height - 150;
+                const y = canvas.height - 100;
                 
-                // Create shield blocks (4x4 grid)
-                for (let row = 0; row < 4; row++) {
-                    for (let col = 0; col < 6; col++) {
+                // Create shield blocks (3x3 grid)
+                for (let row = 0; row < 3; row++) {
+                    for (let col = 0; col < 5; col++) {
                         // Skip some blocks to create shield shape
-                        if ((row === 0 && (col === 0 || col === 5)) || 
-                            (row === 3 && (col === 2 || col === 3))) {
+                        if ((row === 0 && (col === 0 || col === 4)) || 
+                            (row === 2 && (col === 2))) {
                             continue;
                         }
                         
@@ -228,12 +287,20 @@
         function updateGame() {
             if (isPaused || isGameOver) return;
             
+            const now = Date.now();
+            
             // Move player
             if (player.isMovingLeft && player.x > 0) {
                 player.x -= player.speed;
             }
             if (player.isMovingRight && player.x < canvas.width - player.width) {
                 player.x += player.speed;
+            }
+            
+            // Auto-shooting
+            if (now - player.lastShot > player.shootInterval) {
+                playerShoot();
+                player.lastShot = now;
             }
             
             // Move bullets
@@ -244,7 +311,7 @@
             
             // Check for level completion
             if (invaders.every(invader => !invader.alive)) {
-                nextLevel();
+                levelComplete();
             }
             
             // Update explosions
@@ -364,7 +431,7 @@
                 const columns = {};
                 invaders.forEach(invader => {
                     if (invader.alive) {
-                        const col = Math.floor(invader.x / 40);
+                        const col = Math.floor(invader.x / 35);
                         if (!columns[col] || invader.y > columns[col].y) {
                             columns[col] = invader;
                         }
@@ -449,7 +516,7 @@
             ctx.fillRect(player.x, player.y, player.width, player.height);
             
             // Draw player cannon
-            ctx.fillRect(player.x + player.width / 2 - 5, player.y - 10, 10, 10);
+            ctx.fillRect(player.x + player.width / 2 - 5, player.y - 8, 10, 8);
             
             // Draw bullets
             ctx.fillStyle = colors.playerBullet;
@@ -466,27 +533,33 @@
             // Draw invaders
             invaders.forEach(invader => {
                 if (invader.alive) {
-                    ctx.fillStyle = colors.invader;
+                    // Set color based on invader type
+                    switch (invader.type) {
+                        case 0: ctx.fillStyle = colors.invader1; break;
+                        case 1: ctx.fillStyle = colors.invader2; break;
+                        case 2: ctx.fillStyle = colors.invader3; break;
+                    }
+                    
                     ctx.fillRect(invader.x, invader.y, invader.width, invader.height);
                     
                     // Draw different shapes based on invader type
                     ctx.fillStyle = '#000000';
                     switch (invader.type) {
                         case 0: // Top row - eyes and mouth
-                            ctx.fillRect(invader.x + 5, invader.y + 5, 5, 5);
-                            ctx.fillRect(invader.x + 20, invader.y + 5, 5, 5);
-                            ctx.fillRect(invader.x + 10, invader.y + 15, 10, 2);
+                            ctx.fillRect(invader.x + 5, invader.y + 3, 5, 5);
+                            ctx.fillRect(invader.x + 15, invader.y + 3, 5, 5);
+                            ctx.fillRect(invader.x + 7, invader.y + 11, 11, 2);
                             break;
                         case 1: // Middle row - different eyes
-                            ctx.fillRect(invader.x + 7, invader.y + 7, 3, 3);
-                            ctx.fillRect(invader.x + 20, invader.y + 7, 3, 3);
-                            ctx.fillRect(invader.x + 7, invader.y + 13, 16, 2);
+                            ctx.fillRect(invader.x + 7, invader.y + 5, 3, 3);
+                            ctx.fillRect(invader.x + 15, invader.y + 5, 3, 3);
+                            ctx.fillRect(invader.x + 7, invader.y + 10, 11, 2);
                             break;
                         case 2: // Bottom row - alien look
-                            ctx.fillRect(invader.x + 5, invader.y + 5, 20, 3);
-                            ctx.fillRect(invader.x + 5, invader.y + 12, 20, 3);
-                            ctx.fillRect(invader.x + 10, invader.y + 5, 2, 10);
-                            ctx.fillRect(invader.x + 18, invader.y + 5, 2, 10);
+                            ctx.fillRect(invader.x + 3, invader.y + 3, 19, 3);
+                            ctx.fillRect(invader.x + 3, invader.y + 9, 19, 3);
+                            ctx.fillRect(invader.x + 8, invader.y + 3, 2, 9);
+                            ctx.fillRect(invader.x + 15, invader.y + 3, 2, 9);
                             break;
                     }
                 }
@@ -495,7 +568,10 @@
             // Draw shields
             ctx.fillStyle = colors.shield;
             shields.forEach(block => {
+                // Draw with different opacity based on health
+                ctx.globalAlpha = block.health === 2 ? 1 : 0.5;
                 ctx.fillRect(block.x, block.y, block.width, block.height);
+                ctx.globalAlpha = 1;
             });
             
             // Draw explosions
@@ -508,10 +584,10 @@
             
             // Draw game info
             ctx.fillStyle = colors.text;
-            ctx.font = '16px monospace';
+            ctx.font = '14px monospace';
             ctx.fillText(`SCORE: ${score}`, 10, 20);
-            ctx.fillText(`LIVES: ${lives}`, canvas.width - 100, 20);
-            ctx.fillText(`LEVEL: ${level}`, canvas.width / 2 - 30, 20);
+            ctx.fillText(`LIVES: ${lives}`, canvas.width - 80, 20);
+            ctx.fillText(`LEVEL: ${level}`, canvas.width / 2 - 25, 20);
         }
         
         // Check collision between two objects
@@ -526,6 +602,9 @@
         function playerShoot() {
             if (isGameOver || isPaused) return;
             
+            // Limit number of bullets
+            if (bullets.length >= 3) return;
+            
             bullets.push({
                 x: player.x + player.width / 2 - 2,
                 y: player.y - 10,
@@ -538,22 +617,42 @@
             playSound('shoot');
         }
         
-        // Next level
-        function nextLevel() {
-            level++;
-            levelElement.textContent = level;
+        // Level complete
+        function levelComplete() {
+            clearInterval(gameLoop);
+            levelScoreElement.textContent = score;
+            levelNumberElement.textContent = level;
+            levelCompleteElement.classList.remove('hidden');
+            playSound('levelComplete');
             
-            // Increase difficulty
-            invaderSpeed += 0.2;
-            invaderShootChance += 0.001;
-            
-            // Create new invaders
-            createInvaders();
-            
-            // Create new shields if all destroyed
-            if (shields.length === 0) {
-                createShields();
-            }
+            // Continue to next level after delay
+            setTimeout(() => {
+                if (level < levelConfigs.length) {
+                    level++;
+                    levelElement.textContent = level;
+                    
+                    // Set difficulty based on level
+                    const config = levelConfigs[level-1];
+                    invaderSpeed = config.speed;
+                    invaderShootChance = config.shootChance;
+                    
+                    // Create new invaders
+                    createInvaders();
+                    
+                    // Create new shields if all destroyed
+                    if (shields.length === 0) {
+                        createShields();
+                    }
+                    
+                    levelCompleteElement.classList.add('hidden');
+                    gameLoop = setInterval(updateGame, gameSpeed);
+                } else {
+                    // Game complete!
+                    gameOverElement.querySelector('div').textContent = "YOU WIN!";
+                    gameOverElement.classList.remove('hidden');
+                    finalScoreElement.textContent = score;
+                }
+            }, 2000);
         }
         
         // Game over
@@ -574,51 +673,101 @@
         // Play sound
         function playSound(type) {
             // Simple beep sounds using Web Audio API
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            switch (type) {
-                case 'shoot':
-                    oscillator.type = 'square';
-                    oscillator.frequency.value = 880;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    setTimeout(() => oscillator.stop(), 50);
-                    break;
-                case 'invaderShoot':
-                    oscillator.type = 'sawtooth';
-                    oscillator.frequency.value = 440;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    setTimeout(() => oscillator.stop(), 50);
-                    break;
-                case 'explosion':
-                    oscillator.type = 'square';
-                    oscillator.frequency.value = 220;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    setTimeout(() => oscillator.stop(), 100);
-                    break;
-                case 'playerHit':
-                    oscillator.type = 'sawtooth';
-                    oscillator.frequency.value = 110;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    setTimeout(() => oscillator.stop(), 300);
-                    break;
-                case 'gameOver':
-                    oscillator.type = 'sawtooth';
-                    oscillator.frequency.value = 110;
-                    gainNode.gain.value = 0.1;
-                    oscillator.start();
-                    oscillator.frequency.exponentialRampToValueAtTime(55, audioContext.currentTime + 1);
-                    setTimeout(() => oscillator.stop(), 1000);
-                    break;
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                switch (type) {
+                    case 'shoot':
+                        oscillator.type = 'square';
+                        oscillator.frequency.value = 880;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+                        setTimeout(() => oscillator.stop(), 50);
+                        break;
+                    case 'invaderShoot':
+                        oscillator.type = 'sawtooth';
+                        oscillator.frequency.value = 440;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.05);
+                        setTimeout(() => oscillator.stop(), 50);
+                        break;
+                    case 'explosion':
+                        oscillator.type = 'square';
+                        oscillator.frequency.value = 220;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.1);
+                        setTimeout(() => oscillator.stop(), 100);
+                        break;
+                    case 'playerHit':
+                        oscillator.type = 'sawtooth';
+                        oscillator.frequency.value = 110;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+                        setTimeout(() => oscillator.stop(), 300);
+                        break;
+                    case 'gameOver':
+                        oscillator.type = 'sawtooth';
+                        oscillator.frequency.value = 110;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        oscillator.frequency.exponentialRampToValueAtTime(55, audioContext.currentTime + 1);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1);
+                        setTimeout(() => oscillator.stop(), 1000);
+                        break;
+                    case 'levelComplete':
+                        oscillator.type = 'sine';
+                        oscillator.frequency.value = 880;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        
+                        // Play a little victory tune
+                        oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+                        oscillator.frequency.exponentialRampToValueAtTime(1760, audioContext.currentTime + 0.1);
+                        oscillator.frequency.exponentialRampToValueAtTime(2349.3, audioContext.currentTime + 0.2);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.3);
+                        setTimeout(() => oscillator.stop(), 300);
+                        break;
+                }
+            } catch (e) {
+                console.log("Audio error:", e);
             }
+        }
+        
+        // Handle touch events for swipe controls
+        function handleTouchStart(e) {
+            touchStartX = e.touches[0].clientX;
+        }
+        
+        function handleTouchMove(e) {
+            if (!touchStartX) return;
+            
+            const touchX = e.touches[0].clientX;
+            const diffX = touchX - touchStartX;
+            
+            if (Math.abs(diffX) > 10) {
+                if (diffX > 0) {
+                    player.isMovingLeft = false;
+                    player.isMovingRight = true;
+                } else {
+                    player.isMovingRight = false;
+                    player.isMovingLeft = true;
+                }
+            }
+        }
+        
+        function handleTouchEnd() {
+            player.isMovingLeft = false;
+            player.isMovingRight = false;
+            touchStartX = 0;
         }
         
         // Event listeners
@@ -634,9 +783,6 @@
                     break;
                 case 'ArrowRight':
                     player.isMovingRight = true;
-                    break;
-                case ' ':
-                    playerShoot();
                     break;
                 case 'p':
                     togglePause();
@@ -656,24 +802,30 @@
         });
         
         // Touch controls
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+        canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: true });
+        
+        // Button controls
         leftBtn.addEventListener('touchstart', () => { player.isMovingLeft = true; });
         leftBtn.addEventListener('touchend', () => { player.isMovingLeft = false; });
         leftBtn.addEventListener('mousedown', () => { player.isMovingLeft = true; });
         leftBtn.addEventListener('mouseup', () => { player.isMovingLeft = false; });
+        leftBtn.addEventListener('mouseleave', () => { player.isMovingLeft = false; });
         
         rightBtn.addEventListener('touchstart', () => { player.isMovingRight = true; });
         rightBtn.addEventListener('touchend', () => { player.isMovingRight = false; });
         rightBtn.addEventListener('mousedown', () => { player.isMovingRight = true; });
         rightBtn.addEventListener('mouseup', () => { player.isMovingRight = false; });
+        rightBtn.addEventListener('mouseleave', () => { player.isMovingRight = false; });
         
-        shootBtn.addEventListener('click', playerShoot);
-        
-        // Button controls
+        // Game controls
         startBtn.addEventListener('click', initGame);
         pauseBtn.addEventListener('click', togglePause);
+        restartBtn.addEventListener('click', initGame);
         
         // Initial draw
-        drawGame();
+        initGame();
     </script>
 </body>
 </html>
