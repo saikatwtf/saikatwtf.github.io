@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>2048 - Neo-Dark Edition</title>
+    <title>2048 - Neo-Dark Edition (Fixed)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,6 @@
         .tile-2048 { background-color: #ffffff; color: #f15bb5; box-shadow: 0 0 25px #ffffff; font-size: 1.8rem; }
         .tile-super { background-color: #ff006e; color: #ffffff; box-shadow: 0 0 30px #ff006e; font-size: 1.8rem; }
 
-        /* Animation for new tiles */
         @keyframes appear {
             from { opacity: 0; transform: scale(0.5); }
             to { opacity: 1; transform: scale(1); }
@@ -40,7 +39,6 @@
             animation: appear 0.2s ease-out;
         }
 
-        /* Animation for merged tiles */
         @keyframes merge-pop {
             0% { transform: scale(1); }
             50% { transform: scale(1.2); }
@@ -118,9 +116,11 @@
                 updateScore(0);
                 gameOverOverlay.classList.add('hidden');
                 gameOverOverlay.classList.remove('flex');
-                tileContainer.innerHTML = '';
-                addRandomTile();
-                addRandomTile();
+                renderBoard([], []);
+                setTimeout(() => {
+                    addRandomTile();
+                    addRandomTile();
+                }, 100);
             }
 
             function renderBoard(mergedTiles = [], newTiles = []) {
@@ -165,39 +165,48 @@
                 if (emptyTiles.length > 0) {
                     const newTilePos = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
                     board[newTilePos.r][newTilePos.c] = Math.random() > 0.9 ? 4 : 2;
-                    renderBoard([], [newTilePos]); // Re-render to show new tile with animation
+                    renderBoard([], [newTilePos]);
                 }
             }
             
+            // ### BUG FIX IS HERE ###
             function move(direction) {
                 if (isLocked) return;
 
                 const originalBoard = JSON.stringify(board);
                 let mergedTiles = [];
-                
-                const process = (b) => b.map((line, index) => {
-                    const result = processLine(line);
-                    updateScore(result.scoreGained);
-                    result.mergedIndices.forEach(mergedIndex => {
-                        if (direction === 'up') mergedTiles.push({ r: mergedIndex, c: index });
-                        if (direction === 'down') mergedTiles.push({ r: GRID_SIZE - 1 - mergedIndex, c: index });
-                        if (direction === 'left') mergedTiles.push({ r: index, c: mergedIndex });
-                        if (direction === 'right') mergedTiles.push({ r: index, c: GRID_SIZE - 1 - mergedIndex });
-                    });
-                    return result.newLine;
-                });
+                let boardAfterMove;
 
-                if (direction === 'up' || direction === 'down') {
-                    let transposed = transpose(board.map(row => (direction === 'down' ? row.slice().reverse() : row)));
-                    let processed = process(transposed);
-                    board = transpose(processed).map(row => (direction === 'down' ? row.slice().reverse() : row));
-                } else {
-                    let currentBoard = board.map(row => (direction === 'right' ? row.slice().reverse() : row));
-                    let processed = process(currentBoard);
-                    board = processed.map(row => (direction === 'right' ? row.slice().reverse() : row));
+                if (direction === 'left' || direction === 'right') {
+                    const currentBoard = board.map(row => (direction === 'right' ? row.slice().reverse() : row));
+                    const processed = currentBoard.map((line, r) => {
+                        const result = processLine(line);
+                        updateScore(result.scoreGained);
+                        result.mergedIndices.forEach(c => {
+                            const finalC = direction === 'right' ? GRID_SIZE - 1 - c : c;
+                            mergedTiles.push({ r: r, c: finalC });
+                        });
+                        return result.newLine;
+                    });
+                    boardAfterMove = processed.map(row => (direction === 'right' ? row.slice().reverse() : row));
+                } else { // 'up' or 'down'
+                    const transposed = transpose(board);
+                    const currentBoard = transposed.map(col => (direction === 'down' ? col.slice().reverse() : col));
+                    const processed = currentBoard.map((line, c) => {
+                        const result = processLine(line);
+                        updateScore(result.scoreGained);
+                        result.mergedIndices.forEach(r => {
+                            const finalR = direction === 'down' ? GRID_SIZE - 1 - r : r;
+                            mergedTiles.push({ r: finalR, c: c });
+                        });
+                        return result.newLine;
+                    });
+                    const finalTransposed = processed.map(col => (direction === 'down' ? col.slice().reverse() : col));
+                    boardAfterMove = transpose(finalTransposed);
                 }
                 
-                if (originalBoard !== JSON.stringify(board)) {
+                if (originalBoard !== JSON.stringify(boardAfterMove)) {
+                    board = boardAfterMove;
                     isLocked = true;
                     renderBoard(mergedTiles);
                     setTimeout(() => {
@@ -207,7 +216,7 @@
                     }, 200);
                 }
             }
-            
+
             function processLine(line) {
                 let filtered = line.filter(tile => tile !== 0);
                 let scoreGained = 0;
@@ -280,4 +289,3 @@
     </script>
 </body>
 </html>
-
