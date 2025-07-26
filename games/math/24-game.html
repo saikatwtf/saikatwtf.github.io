@@ -3,181 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>24 Game - Math Games</title>
+    <title>2048 Game</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>tailwind.config = { darkMode: 'class' }</script>
+    <style>
+        /* Custom styles for tile colors and animations */
+        .tile {
+            transition: all 0.3s ease-in-out;
+        }
+        .tile-2 { background-color: #eee4da; color: #776e65; }
+        .tile-4 { background-color: #ede0c8; color: #776e65; }
+        .tile-8 { background-color: #f2b179; color: #f9f6f2; }
+        .tile-16 { background-color: #f59563; color: #f9f6f2; }
+        .tile-32 { background-color: #f67c5f; color: #f9f6f2; }
+        .tile-64 { background-color: #f65e3b; color: #f9f6f2; }
+        .tile-128 { background-color: #edcf72; color: #f9f6f2; }
+        .tile-256 { background-color: #edcc61; color: #f9f6f2; }
+        .tile-512 { background-color: #edc850; color: #f9f6f2; }
+        .tile-1024 { background-color: #edc53f; color: #f9f6f2; }
+        .tile-2048 { background-color: #edc22e; color: #f9f6f2; }
+        .tile-super { background-color: #3c3a32; color: #f9f6f2; } /* For tiles > 2048 */
+
+        /* Animation for new tiles */
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: scale(0);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .tile-new {
+            animation: appear 0.2s ease-in-out;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="text-center mb-8">
-            <h1 class="text-4xl font-bold mb-4">24 Game</h1>
-            <p class="text-gray-600 dark:text-gray-300 mb-4">Use the four numbers and operations (+, -, ×, ÷) to make 24</p>
-            <a href="../../index.html" class="text-blue-600 dark:text-blue-400 hover:underline">← Back to Portfolio</a>
-        </div>
-        
-        <div class="max-w-lg mx-auto">
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <div class="flex justify-between items-center mb-6">
-                    <div class="text-lg font-semibold">Score: <span id="score">0</span></div>
-                    <button id="new-game" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">New Numbers</button>
-                </div>
-                
-                <div id="numbers" class="grid grid-cols-4 gap-4 mb-6">
-                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
-                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
-                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
-                    <div class="number-card bg-blue-100 dark:bg-blue-900 p-4 rounded-lg text-center text-3xl font-bold cursor-pointer"></div>
-                </div>
-                
-                <div class="flex justify-center gap-4 mb-6">
-                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">+</button>
-                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">-</button>
-                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">×</button>
-                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">÷</button>
-                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">(</button>
-                    <button class="operator bg-gray-200 dark:bg-gray-700 w-12 h-12 rounded-full text-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600">)</button>
-                </div>
-                
-                <div class="mb-6">
-                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
-                        <div id="expression" class="text-2xl font-mono min-h-12 text-center"></div>
-                    </div>
-                </div>
-                
-                <div class="flex justify-between">
-                    <button id="clear" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Clear</button>
-                    <button id="check" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Check Solution</button>
-                </div>
-                
-                <div id="message" class="mt-4 text-center font-semibold"></div>
-                
-                <div class="mt-6 text-sm text-gray-600 dark:text-gray-400">
-                    <p class="font-semibold">How to play:</p>
-                    <ol class="list-decimal pl-5 space-y-1">
-                        <li>Use all four numbers exactly once</li>
-                        <li>Use operations (+, -, ×, ÷) and parentheses</li>
-                        <li>Make the result equal to 24</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="text-center mb-6">
+        <h1 class="text-5xl font-bold mb-2">2048</h1>
+        <p class="text-gray-600 dark:text-gray-300">Join the numbers to get to the 2048 tile!</p>
     </div>
 
+    <div class="flex items-center gap-4 mb-4">
+        <div class="bg-gray-700 p-3 rounded-lg text-center">
+            <div class="text-gray-400 text-sm font-bold uppercase">Score</div>
+            <div id="score" class="text-2xl font-bold text-white">0</div>
+        </div>
+        <button id="new-game" class="bg-blue-600 text-white px-5 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">New Game</button>
+    </div>
+
+    <div id="game-container" class="relative">
+        <div id="game-over-overlay" class="absolute inset-0 z-10 flex-col items-center justify-center bg-white/70 dark:bg-black/70 rounded-lg hidden">
+            <p class="text-5xl font-extrabold text-gray-800 dark:text-white">Game Over!</p>
+            <button id="try-again" class="mt-4 bg-blue-600 text-white px-5 py-3 rounded-lg font-bold hover:bg-blue-700 transition-colors">Try Again</button>
+        </div>
+
+        <div id="grid-background" class="grid grid-cols-4 gap-3 bg-gray-400 dark:bg-gray-700 p-3 rounded-lg">
+            </div>
+
+        <div id="tile-container" class="absolute inset-0 p-3">
+            </div>
+    </div>
+    
+    <div class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+        <p class="font-semibold">HOW TO PLAY:</p>
+        <p>Use your <strong class="text-gray-800 dark:text-white">arrow keys</strong> to move the tiles. When two tiles with the same number touch, they <strong class="text-gray-800 dark:text-white">merge into one!</strong></p>
+    </div>
+
+
     <script>
-        const numberCards = document.querySelectorAll('.number-card');
-        const operators = document.querySelectorAll('.operator');
-        const expressionDiv = document.getElementById('expression');
-        const checkButton = document.getElementById('check');
-        const clearButton = document.getElementById('clear');
-        const newGameButton = document.getElementById('new-game');
-        const messageDiv = document.getElementById('message');
-        const scoreElement = document.getElementById('score');
-        
-        let currentExpression = '';
-        let selectedNumbers = [];
-        let availableNumbers = [];
-        let score = 0;
-        
-        // Generate a solvable 24 game puzzle
-        function generatePuzzle() {
-            // These combinations are known to have solutions
-            const solvableSets = [
-                [1, 3, 4, 6], [1, 4, 5, 6], [2, 3, 5, 6], [2, 3, 4, 6],
-                [1, 2, 5, 8], [2, 3, 8, 8], [3, 3, 7, 7], [3, 3, 8, 8],
-                [4, 4, 6, 6], [4, 6, 6, 6], [4, 7, 8, 8], [5, 5, 5, 9],
-                [1, 3, 4, 6], [1, 5, 5, 5], [2, 2, 4, 10], [2, 3, 7, 8]
-            ];
-            
-            // Pick a random set
-            const randomSet = solvableSets[Math.floor(Math.random() * solvableSets.length)];
-            
-            // Shuffle the set
-            return randomSet.sort(() => Math.random() - 0.5);
-        }
-        
-        function initGame() {
-            currentExpression = '';
-            selectedNumbers = [];
-            expressionDiv.textContent = '';
-            messageDiv.textContent = '';
-            
-            // Generate new numbers
-            availableNumbers = generatePuzzle();
-            
-            // Display numbers on cards
-            numberCards.forEach((card, index) => {
-                card.textContent = availableNumbers[index];
-                card.classList.remove('bg-gray-300', 'dark:bg-gray-600', 'opacity-50');
-                card.disabled = false;
-            });
-        }
-        
-        function evaluateExpression(expr) {
-            try {
-                // Replace × with * and ÷ with /
-                const jsExpr = expr.replace(/×/g, '*').replace(/÷/g, '/');
-                return eval(jsExpr);
-            } catch (e) {
-                return null;
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridBackground = document.getElementById('grid-background');
+            const tileContainer = document.getElementById('tile-container');
+            const scoreElement = document.getElementById('score');
+            const newGameButton = document.getElementById('new-game');
+            const gameOverOverlay = document.getElementById('game-over-overlay');
+            const tryAgainButton = document.getElementById('try-again');
+
+            const GRID_SIZE = 4;
+            let board = [];
+            let score = 0;
+            let isLocked = false;
+
+            // ## Game Initialization ##
+            // ------------------------
+
+            function setupBoard() {
+                // Create background cells
+                gridBackground.innerHTML = '';
+                for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'w-20 h-20 md:w-24 md:h-24 bg-gray-300 dark:bg-gray-600 rounded-md';
+                    gridBackground.appendChild(cell);
+                }
             }
-        }
-        
-        function checkSolution() {
-            // Check if all numbers are used
-            if (selectedNumbers.length !== 4) {
-                messageDiv.textContent = 'Use all four numbers!';
-                messageDiv.className = 'mt-4 text-center font-semibold text-yellow-600';
-                return;
+
+            function newGame() {
+                board = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
+                score = 0;
+                isLocked = false;
+                updateScore(0);
+                gameOverOverlay.classList.add('hidden');
+                gameOverOverlay.classList.remove('flex');
+
+                addRandomTile();
+                addRandomTile();
+                renderBoard();
             }
-            
-            // Evaluate the expression
-            const result = evaluateExpression(currentExpression);
-            
-            if (result === null) {
-                messageDiv.textContent = 'Invalid expression!';
-                messageDiv.className = 'mt-4 text-center font-semibold text-red-600';
-            } else if (Math.abs(result - 24) < 0.0001) { // Account for floating point errors
-                messageDiv.textContent = 'Correct! You made 24!';
-                messageDiv.className = 'mt-4 text-center font-semibold text-green-600';
-                score += 1;
+
+            // ## Rendering ##
+            // ----------------
+
+            function renderBoard() {
+                tileContainer.innerHTML = '';
+                board.forEach((row, rowIndex) => {
+                    row.forEach((value, colIndex) => {
+                        if (value !== 0) {
+                            createTile(value, rowIndex, colIndex);
+                        }
+                    });
+                });
+            }
+
+            function createTile(value, row, col, isNew = false) {
+                const tile = document.createElement('div');
+                const tileValueClass = value > 2048 ? 'tile-super' : `tile-${value}`;
+                
+                tile.className = `tile ${tileValueClass} absolute flex items-center justify-center w-20 h-20 md:w-24 md:h-24 rounded-md font-bold text-2xl md:text-4xl`;
+                if (isNew) {
+                    tile.classList.add('tile-new');
+                }
+
+                tile.textContent = value;
+                // Position tile using transform for smooth animations
+                const positionLeft = col * (tile.offsetWidth + 12) + 12; // 12 is for gap-3
+                const positionTop = row * (tile.offsetHeight + 12) + 12;
+                // Adjust for dynamic sizing
+                const tileBaseSize = window.innerWidth < 768 ? 80 : 96; // Corresponds to w-20/h-20 and md:w-24/h-24
+                const gapSize = 12; // p-3 and gap-3 -> 12px
+                tile.style.transform = `translate(${col * (tileBaseSize + gapSize)}px, ${row * (tileBaseSize + gapSize)}px)`;
+                
+                tileContainer.appendChild(tile);
+            }
+
+            function updateScore(points) {
+                score += points;
                 scoreElement.textContent = score;
-                setTimeout(initGame, 2000);
-            } else {
-                messageDiv.textContent = `Result is ${result}, not 24. Try again!`;
-                messageDiv.className = 'mt-4 text-center font-semibold text-red-600';
             }
-        }
-        
-        // Event listeners
-        numberCards.forEach(card => {
-            card.addEventListener('click', () => {
-                if (card.disabled) return;
+
+            // ## Game Logic ##
+            // -----------------
+
+            function addRandomTile() {
+                const emptyTiles = [];
+                board.forEach((row, r) => {
+                    row.forEach((cell, c) => {
+                        if (cell === 0) {
+                            emptyTiles.push({ r, c });
+                        }
+                    });
+                });
+
+                if (emptyTiles.length > 0) {
+                    const { r, c } = emptyTiles[Math.floor(Math.random() * emptyTiles.length)];
+                    board[r][c] = Math.random() > 0.9 ? 4 : 2;
+                }
+            }
+
+            function handleInput(e) {
+                if (isLocked) return;
                 
-                const number = card.textContent;
-                currentExpression += number;
-                expressionDiv.textContent = currentExpression;
+                let boardChanged = false;
+                switch (e.key) {
+                    case 'ArrowUp':
+                        boardChanged = moveUp();
+                        break;
+                    case 'ArrowDown':
+                        boardChanged = moveDown();
+                        break;
+                    case 'ArrowLeft':
+                        boardChanged = moveLeft();
+                        break;
+                    case 'ArrowRight':
+                        boardChanged = moveRight();
+                        break;
+                    default:
+                        return; // Exit if not an arrow key
+                }
+
+                if (boardChanged) {
+                    isLocked = true;
+                    setTimeout(() => {
+                        addRandomTile();
+                        renderBoard();
+                        if (!canMove()) {
+                           endGame();
+                        }
+                        isLocked = false;
+                    }, 200); // Short delay for animations
+                }
+            }
+            
+            // ## Movement Functions ##
+            // -----------------------
+
+            // Helper function to slide and merge a single line (row/column)
+            function processLine(line) {
+                // 1. Slide: Remove zeros
+                let filteredLine = line.filter(tile => tile !== 0);
                 
-                // Mark card as used
-                card.classList.add('bg-gray-300', 'dark:bg-gray-600', 'opacity-50');
-                card.disabled = true;
+                // 2. Merge
+                for (let i = 0; i < filteredLine.length - 1; i++) {
+                    if (filteredLine[i] === filteredLine[i+1]) {
+                        filteredLine[i] *= 2;
+                        updateScore(filteredLine[i]);
+                        filteredLine.splice(i + 1, 1); // Remove the merged tile
+                    }
+                }
                 
-                selectedNumbers.push(number);
-            });
+                // 3. Pad with zeros
+                const newLine = Array(GRID_SIZE).fill(0);
+                filteredLine.forEach((tile, i) => newLine[i] = tile);
+                
+                return newLine;
+            }
+            
+            // Helper function to compare two arrays (or 2D arrays)
+            function boardsAreSame(boardA, boardB) {
+                return JSON.stringify(boardA) === JSON.stringify(boardB);
+            }
+
+            function moveLeft() {
+                const originalBoard = JSON.parse(JSON.stringify(board)); // Deep copy
+                const newBoard = board.map(row => processLine(row));
+                board = newBoard;
+                return !boardsAreSame(originalBoard, newBoard);
+            }
+
+            function moveRight() {
+                const originalBoard = JSON.parse(JSON.stringify(board));
+                const newBoard = board.map(row => {
+                    let reversedRow = row.slice().reverse();
+                    let processed = processLine(reversedRow);
+                    return processed.reverse();
+                });
+                board = newBoard;
+                return !boardsAreSame(originalBoard, newBoard);
+            }
+            
+            // Helper to transpose the board (rows become columns and vice-versa)
+            function transpose(board) {
+                const newBoard = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(0));
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    for (let c = 0; c < GRID_SIZE; c++) {
+                        newBoard[c][r] = board[r][c];
+                    }
+                }
+                return newBoard;
+            }
+
+            function moveUp() {
+                const originalBoard = JSON.parse(JSON.stringify(board));
+                let transposedBoard = transpose(board);
+                let newTransposedBoard = transposedBoard.map(col => processLine(col));
+                board = transpose(newTransposedBoard);
+                return !boardsAreSame(originalBoard, board);
+            }
+
+            function moveDown() {
+                const originalBoard = JSON.parse(JSON.stringify(board));
+                let transposedBoard = transpose(board);
+                let newTransposedBoard = transposedBoard.map(col => {
+                    let reversedCol = col.slice().reverse();
+                    let processed = processLine(reversedCol);
+                    return processed.reverse();
+                });
+                board = transpose(newTransposedBoard);
+                return !boardsAreSame(originalBoard, board);
+            }
+
+            // ## Game Over Logic ##
+            // --------------------
+            
+            function canMove() {
+                for (let r = 0; r < GRID_SIZE; r++) {
+                    for (let c = 0; c < GRID_SIZE; c++) {
+                        if (board[r][c] === 0) return true; // Found an empty cell
+                        // Check for horizontal merge
+                        if (c < GRID_SIZE - 1 && board[r][c] === board[r][c + 1]) return true;
+                        // Check for vertical merge
+                        if (r < GRID_SIZE - 1 && board[r][c] === board[r + 1][c]) return true;
+                    }
+                }
+                return false; // No empty cells and no possible merges
+            }
+            
+            function endGame() {
+                isLocked = true;
+                gameOverOverlay.classList.remove('hidden');
+                gameOverOverlay.classList.add('flex');
+            }
+
+            // ## Event Listeners ##
+            // --------------------
+            
+            document.addEventListener('keydown', handleInput);
+            newGameButton.addEventListener('click', newGame);
+            tryAgainButton.addEventListener('click', newGame);
+
+            // ## Start Game ##
+            // -----------------
+            setupBoard();
+            newGame();
         });
-        
-        operators.forEach(op => {
-            op.addEventListener('click', () => {
-                currentExpression += op.textContent;
-                expressionDiv.textContent = currentExpression;
-            });
-        });
-        
-        clearButton.addEventListener('click', initGame);
-        checkButton.addEventListener('click', checkSolution);
-        newGameButton.addEventListener('click', initGame);
-        
-        // Initialize the game
-        initGame();
     </script>
 </body>
 </html>
+
